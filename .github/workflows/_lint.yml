@@ -35,7 +35,7 @@ jobs:
       #     submodules: true
 
       - name: Lint
-        run: ':'
+        run: echo lint
         # run: ./.ci/check.sh
 
 # vim: foldmethod=marker foldlevel=0
