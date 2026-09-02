@@ -1,7 +1,6 @@
 name: Nightly
 
 permissions:
-  actions: write
   contents: write
 
 on:
@@ -43,7 +42,7 @@ jobs:
       - name: Check if head is tagged
         id: head_check
         run: |
-          git describe --tag --exact-match --match='v[0-9]*' || printf 'untagged=true' >>"${GITHUB_OUTPUT}"
+          git describe --tag --exact-match --match='v[0-9]*' --match='nightly' || printf 'untagged=true' >>"${GITHUB_OUTPUT}"
 
       - name: Tag nightly
         if: steps.head_check.outputs.untagged

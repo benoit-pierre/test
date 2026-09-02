@@ -8,6 +8,10 @@ on:
     tags: 
       - v[0-9]*
       - nightly
+  on:
+    workflow_run:
+      workflows: [Nightly]
+      types: [completed]
 
 jobs:
 
