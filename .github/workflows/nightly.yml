@@ -51,5 +51,5 @@ jobs:
           version="$(git describe --match='v[0-9]*')"
           git config user.name 'nightly workflow'
           git config user.email ''
-          git tag -m "${version} -f nightly
+          git tag -m "${version}" -f nightly
           git push -f origin refs/tags/nightly
