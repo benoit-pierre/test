@@ -1,0 +1,50 @@
+name: Nightlies
+
+permissions:
+  # TODO: make it conditional on `vars.ORIGIN_REPO`?
+  contents: write
+
+on:
+  schedule:
+    # Every day at 6 AM (UTC, default branch only).
+    # - cron: '0 6 * * *'
+    - cron: '0 * * * *'
+  workflow_dispatch:
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  
+  nightly:
+
+    name: Nightly
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          clean: false
+          fetch-depth: 0
+          fetch-tags: true
+          filter: tree:0
+          show-progress: false
+          sparse-checkout:
+
+      - name: Update fork
+        id: update
+        run: |
+          set -x
+          git pull --ff-only --tags ${{ vars.ORIGIN_REPO }} ${{ github.ref }}
+          git push --tags origin
+          git describe --tag --exact-match --match='v[0-9]*' || printf 'tag_nightly=true' >>"${GITHUB_OUTPUT}"
+
+      - name: Tag nightly
+        if: steps.update.outputs.tag_nightly
+        run: |
+          set -x
+          git tag -f nightly
+          git push -f origin refs/tags/nightly

@@ -1,0 +1,84 @@
+name: Build
+
+permissions:
+  contents: read
+
+on:
+  workflow_call:
+    inputs: &INPUTS
+      jobs:
+        description: 'Run the specified list of jobs'
+        default: 'default'
+        required: false
+        type: string
+      publish:
+        description: 'Publish a release to GitHub'
+        default: false
+        required: false
+        type: boolean
+  workflow_dispatch:
+    inputs: *INPUTS
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+
+  prepare:
+    name: Prepare
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          clean: false
+          fetch-depth: 1
+          show-progress: false
+          sparse-checkout: |
+            .ci
+            .github/workflows
+      - name: Generate outputs
+        id: generate
+        run: |
+          set -o noglob
+          >>"${GITHUB_OUTPUT}" ./.ci/build.prepare.sh ${{ inputs.jobs }}
+    outputs:
+      emulator: ${{ steps.generate.outputs.emulator }}
+      macos: ${{ steps.generate.outputs.macos }}
+      platform: ${{ steps.generate.outputs.platform }}
+
+  emulator:
+    name: Emulator
+    needs: prepare
+    if: |
+      !cancelled() &&
+      needs.prepare.outputs.emulator
+    uses: ./.github/workflows/_build.matrix.yml
+    with:
+      jobs: ${{ needs.prepare.outputs.emulator }}
+      fail_fast: true
+
+  macos:
+    name: macOS
+    needs: [prepare, emulator]
+    if: |
+      !cancelled() &&
+      needs.prepare.outputs.macos &&
+      contains('skipped success', needs.emulator.result)
+    uses: ./.github/workflows/_build.matrix.yml
+    with:
+      jobs: ${{ needs.prepare.outputs.macos }}
+
+  platform:
+    name: Platform
+    needs: [prepare, emulator]
+    if: |
+      !cancelled() &&
+      needs.prepare.outputs.platform &&
+      contains('skipped success', needs.emulator.result)
+    uses: ./.github/workflows/_build.matrix.yml
+    with:
+      jobs: ${{ needs.prepare.outputs.platform }}
+
+# vim: foldmethod=marker foldlevel=0

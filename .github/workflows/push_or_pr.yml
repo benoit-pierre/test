@@ -1,0 +1,24 @@
+name: Push / PR
+
+permissions:
+  contents: read
+
+on:
+  push:
+    ignore_tags: '*'
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+
+  lint:
+    name: Lint
+    uses: ./.github/workflows/_lint.yml
+
+  build:
+    name: Build
+    needs: lint
+    uses: ./.github/workflows/_build.yml
