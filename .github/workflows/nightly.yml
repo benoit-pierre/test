@@ -48,5 +48,6 @@ jobs:
         if: steps.head_check.outputs.untagged
         run: |
           set -x
-          git tag -f nightly
+          version="$(git describe --match='v[0-9]*')"
+          git tag -m "${version}" -f nightly
           git push -f origin refs/tags/nightly
