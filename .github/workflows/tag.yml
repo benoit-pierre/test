@@ -27,4 +27,4 @@ jobs:
       # right? ¯\_(ツ)_/¯
       TOKEN: ${{ secrets.TOKEN }}
     with:
-      repo: ${{ vars.REPO }}
+      repo: ${{ vars.RELEASE_REPO || github.repository }}
