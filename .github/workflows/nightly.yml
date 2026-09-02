@@ -46,6 +46,9 @@ jobs:
 
       - name: Tag nightly
         if: steps.head_check.outputs.untagged
+        env:
+          GIT_AUTHOR_NAME: nightly workflow
+          GIT_AUTHOR_EMAIL:
         run: |
           set -x
           git tag -a -f nightly
