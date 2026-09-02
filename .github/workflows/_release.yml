@@ -6,11 +6,11 @@ permissions:
 on:
   workflow_call:
     inputs:
-      repo:
+      gh_repo:
         required: true
         type: string
     secrets:
-      TOKEN:
+      GH_TOKEN:
         required: true
 
 defaults:
@@ -45,8 +45,8 @@ jobs:
 
       - name: Release
         env:
-          GH_REPO: ${{ inputs.repo }}
-          GH_TOKEN: ${{ secrets.TOKEN }}
+          GH_REPO: ${{ inputs.gh_repo }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: ./.ci/release.sh
 
 # vim: foldmethod=marker foldlevel=0
