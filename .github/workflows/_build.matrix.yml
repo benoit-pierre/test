@@ -60,7 +60,7 @@ jobs:
     steps:
 
       - name: Build
-        run: :
+        run: echo build
 
       # # Setup. {{{
 
