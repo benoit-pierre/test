@@ -25,6 +25,6 @@ jobs:
       # Yep, this is required to allow using the `release` environment
       # secret of the same name in the called workflow… Pretty evident,
       # right? ¯\_(ツ)_/¯
-      TOKEN: ${{ secrets.TOKEN }}
+      TOKEN: ${{ secrets.GH_TOKEN }}
     with:
-      repo: ${{ vars.RELEASE_REPO || github.repository }}
+      repo: ${{ vars.RELEASE_GH_REPO || github.repository }}

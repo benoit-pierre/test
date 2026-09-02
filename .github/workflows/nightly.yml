@@ -1,4 +1,4 @@
-name: Nightlies
+name: Nightly
 
 permissions:
   contents: write
@@ -33,10 +33,10 @@ jobs:
           sparse-checkout:
 
       - name: Update fork
-        if: vars.ORIGIN_REPO
+        if: vars.ORIGIN_GH_REPO
         run: |
           set -x
-          git pull --ff-only --tags ${{ vars.ORIGIN_REPO }} ${{ github.ref }}
+          git pull --ff-only --tags ${{ vars.ORIGIN_GH_REPO }} ${{ github.ref }}
           git push --tags origin
 
       - name: Check if head is tagged
