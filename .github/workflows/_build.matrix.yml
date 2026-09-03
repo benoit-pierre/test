@@ -59,9 +59,6 @@ jobs:
 
     steps:
 
-      - name: Build
-        run: echo build
-
       # # Setup. {{{
 
       # - name: Setup Python (macOS)

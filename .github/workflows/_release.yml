@@ -43,8 +43,6 @@ jobs:
           path: assets
           skip-decompress: true
 
-      - run: echo "${GITHUB_WORKSPACE}"
-
       - name: Checkout release repo
         uses: actions/checkout@v7
         with:

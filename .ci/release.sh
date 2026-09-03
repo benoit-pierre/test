@@ -60,15 +60,25 @@ echo -e "${ANSI_BLUE}prerelease: ${prerelease:-0}${ANSI_RESET}"
 
 assets=()
 for a in "${assets_dir}"/*; do
+    label=()
     case "${a##*/}" in
-        koreader-android-arm-*.apk) a+='#Android ARM APK' ;;
-        koreader-android-arm64-*.apk) a+='#Android ARM64 APK' ;;
-        koreader-kindlepw2-*.tar.gz) a+='#KindlePW2 TAR.GZ' ;;
-        koreader-kindlepw2-*.tar.xz) a+='#KindlePW2 TAR.XZ' ;;
-        koreader-kindlepw2-*.zip) a+='#KindlePW2 ZIP' ;;
-        koreader-*-x86_64.AppImage) a+='#Linux x86_64 AppImage' ;;
+        koreader-android-arm-*.apk) label+=('Android ARM') ;;
+        koreader-android-arm64-*.apk) label+=('Android ARM64') ;;
+        koreader-kindle-legacy-*) label+=('Kindle Legacy') ;;
+        koreader-kindle-*) label+=('Kindle') ;;
+        koreader-kindlepw2-*) label+=('Kindle PW2') ;;
+        koreader-kindlehf-*) label+=('Kindle HF') ;;
+        koreader-linux-x86_64-*) label+=('Linux x86_64') ;;
+        koreader-*-x86_64.AppImage) label+=('Linux x86_64') ;;
     esac
-    assets+=("${a}")
+    case "${a##*/}" in
+        *.apk) label+=('APK') ;;
+        *.tar.gz) label+=('TAR.GZ') ;;
+        *.tar.xz) label+=('TAR.XZ') ;;
+        *.zip) label+=('ZIP') ;;
+        *.AppImage) label+=('AppImage') ;;
+    esac
+    assets+=("${a}${label:+#}${label[*]}")
 done
 readarray -t assets < <(printf '%s\n' "${assets[@]}" | sort -t\# -k2)
 
