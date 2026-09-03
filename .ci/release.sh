@@ -26,8 +26,9 @@ shift
 # shellcheck disable=2016
 [[ -n "${GH_TOKEN}" ]] || die '$GH_TOKEN is empty / not set'
 
-# run git config user.name 'Github Actions'
-# run git config user.email '<>'
+# Setup git author.
+run git -C "${release_checkout}" config user.name 'Github Actions'
+run git -C "${release_checkout}" config user.email '<>'
 
 # We can't rely on `$GITHUB_REF` since we may be called from the nightly workflow.
 if tag="$(git describe --tag --exact-match --match='v[0-9]*')"; then
@@ -43,7 +44,7 @@ echo -e "${ANSI_BLUE}tag: ${tag}${ANSI_RESET}"
 echo -e "${ANSI_BLUE}stable: ${stable:+yes}${stable:-no}${ANSI_RESET}"
 echo -e "${ANSI_BLUE}target: ${target}${ANSI_RESET}"
 
-# Update target repo tag.
+# Update release repo tag.
 run git -C "${release_checkout}" push -f origin "refs/tags/${tag}"
 
 # Create release.
