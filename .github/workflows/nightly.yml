@@ -15,13 +15,11 @@ defaults:
 
 jobs:
   
-  nightly:
-
-    name: Nightly
+  update:
+    name: Update
     runs-on: ubuntu-latest
-
+    if: vars.ORIGIN_GH_REPO
     steps:
-
       - name: Checkout
         uses: actions/checkout@v6
         with:
@@ -31,25 +29,27 @@ jobs:
           filter: tree:0
           show-progress: false
           sparse-checkout:
-
       - name: Update fork
-        if: vars.ORIGIN_GH_REPO
         run: |
           set -x
-          git pull --ff-only --tags ${{ vars.ORIGIN_GH_REPO }} ${{ github.ref }}
-          git push --tags origin
+          git pull --ff-only ${{ vars.ORIGIN_GH_REPO }} ${{ github.ref }}
+          git push --follow-tags origin
 
-      - name: Check if head is tagged
-        id: head_check
-        run: |
-          git describe --tag --exact-match --match='v[0-9]*' --match='nightly' || printf 'untagged=true' >>"${GITHUB_OUTPUT}"
+  build:
+    name: Build
+    needs: update
+    uses: ./.github/workflows/_build.yml
+    with:
+      jobs: release
 
-      - name: Tag nightly
-        if: steps.head_check.outputs.untagged
-        run: |
-          set -x
-          version="$(git describe --match='v[0-9]*')"
-          git config user.name 'nightly workflow'
-          git config user.email ''
-          git tag -m "${version}" -f nightly
-          git push -f origin refs/tags/nightly
+  release:
+    name: Release
+    needs: build
+    uses: ./.github/workflows/_release.yml
+    secrets:
+      # Yep, this is required to allow using the `release` environment
+      # secret of the same name in the called workflow… Pretty evident,
+      # right? ¯\_(ツ)_/¯
+      GH_TOKEN: ${{ secrets.GH_TOKEN }}
+    with:
+      gh_repo: ${{ vars.RELEASE_GH_REPO || github.repository }}

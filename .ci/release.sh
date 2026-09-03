@@ -21,15 +21,17 @@ run() {
 [[ $# -eq 0 ]] || "no arguments expected, got $#"
 [[ -n "${GH_REPO}" ]] || die '$GH_REPO is not set'
 [[ -n "${GH_TOKEN}" ]] || die '$GH_TOKEN is not set'
-[[ -n "${GITHUB_REF}" ]] || die '$GITHUB_REF is not set'
-[[ "${GITHUB_REF_TYPE}" = 'tag' ]] || "\$GITHUB_REF_TYPE is not tag: ${GITHUB_REF_TYPE}"
+
+# We can't rely on since we may be called from the nightly workflow.
+tag="$(git describe --tag --exact-match --match='v[0-9]*' --match='nightly')"
+echo -e "${ANSI_BLUE}tag: ${tag}${ANSI_RESET}"
 
 # CONTAINER_ID="$(run docker run --detach --tty --volume="${PWD}/artifacts:/artifacts" --workdir=/artifacts/new "${DOCKER_IMAGE}" sh -c 'while true; do sleep 0.5; done')"
 # trap 'run docker kill "${CONTAINER_ID}"' EXIT
 
 container_exec() {
     echo -e "::group::docker exec … ${ANSI_GREEN}$(printf '%q ' "$@")${ANSI_RESET}" 1>&2
-    docker exec --tty "${CONTAINER_ID}" "$@" && code=0 || code=$?
+    echo docker exec --tty "${CONTAINER_ID}" "$@" && code=0 || code=$?
     echo "::endgroup::"
     return "${code}" 1>&2
 }

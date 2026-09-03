@@ -6,6 +6,8 @@ set -o pipefail
 ANSI_RED="\033[31;1m"
 # shellcheck disable=SC2034
 ANSI_GREEN="\033[32;1m"
+# shellcheck disable=SC2034
+ANSI_BLUE="\033[34;1m"
 ANSI_RESET="\033[0m"
 
 travis_retry() {
