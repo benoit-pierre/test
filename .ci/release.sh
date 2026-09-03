@@ -34,10 +34,12 @@ shift 2
 
 # We can't rely on `$GITHUB_REF` since we may be called from the nightly workflow.
 if tag="$(git -C "${release_checkout}" describe --tag --exact-match --match='v[0-9]*')"; then
-    stable=1
+    draft=1
+    prerelease=
 else
     tag='nightly'
-    stable=''
+    draft=
+    prerelease=1
 fi
 
 target="$(git -C "${release_checkout}" rev-parse HEAD)"
@@ -50,10 +52,11 @@ else
     mode='create'
 fi
 
-echo -e "${ANSI_BLUE}mode  : ${mode}${ANSI_RESET}"
-echo -e "${ANSI_BLUE}stable: ${stable:+yes}${stable:-no}${ANSI_RESET}"
-echo -e "${ANSI_BLUE}tag   : ${tag}${ANSI_RESET}"
-echo -e "${ANSI_BLUE}target: ${target}${ANSI_RESET}"
+echo -e "${ANSI_BLUE}mode      : ${mode}${ANSI_RESET}"
+echo -e "${ANSI_BLUE}tag       : ${tag}${ANSI_RESET}"
+echo -e "${ANSI_BLUE}target    : ${target}${ANSI_RESET}"
+echo -e "${ANSI_BLUE}draft     : ${draft:-0}${ANSI_RESET}"
+echo -e "${ANSI_BLUE}prerelease: ${prerelease:-0}${ANSI_RESET}"
 
 assets=()
 for a in "${assets_dir}"/*; do
@@ -78,7 +81,7 @@ run git -C "${release_checkout}" tag -m '' -f "${tag}"
 run git -C "${release_checkout}" push -f origin "refs/tags/${tag}"
 
 # Create / update release.
-run gh release "${mode}" ${stable:+--draft} --notes='.' ${stable:---prerelease} --target="${target}" --title="${tag}" "${tag}"
+run gh release "${mode}" ${draft:+--draft} --notes='.' ${prerelease:+--prerelease} --target="${target}" --title="${tag}" "${tag}"
 
 # Upload assets.
 run gh release upload --clobber "${tag}" "${assets[@]}"
