@@ -55,6 +55,7 @@ jobs:
           repository: ${{ inputs.gh_repo }}
           show-progress: false
           sparse-checkout:
+          token: ${{ secrets.GH_TOKEN }}
 
       - name: Release
         env:
