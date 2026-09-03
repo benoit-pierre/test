@@ -43,8 +43,8 @@ jobs:
           path: artifacts/new
           skip-decompress: true
 
-      - name: test
-        run: echo "GITHUB_WORKSPACE: ${GITHUB_WORKSPACE}"
+      - run: |
+        echo "GITHUB_WORKSPACE: ${GITHUB_WORKSPACE}"
 
       # - name: Checkout release repo
       #   if: inputs.gh_repo != github.repository
