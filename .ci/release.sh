@@ -19,61 +19,33 @@ run() {
 }
 
 [[ $# -eq 0 ]] || "no arguments expected, got $#"
-[[ -n "${GH_REPO}" ]] || die '$GH_REPO is not set'
-[[ -n "${GH_TOKEN}" ]] || die '$GH_TOKEN is not set'
+# shellcheck disable=2016
+[[ -n "${GH_REPO}" ]] || die '$GH_REPO is empty / not set'
+# shellcheck disable=2016
+[[ -n "${GH_TOKEN}" ]] || die '$GH_TOKEN is empty / not set'
 
-# We can't rely on since we may be called from the nightly workflow.
-tag="$(git describe --tag --exact-match --match='v[0-9]*' --match='nightly')"
+# We can't rely on `$GITHUB_REF` since we may be called from the nightly workflow.
+if tag="$(git describe --tag --exact-match --match='v[0-9]*')"; then
+    stable=1
+else
+    tag='nightly'
+    stable=''
+    run git config user.name 'Github Actions'
+    run git config user.email ''
+    run git tag -m '' -f nightly
+fi
+commit="$(git rev-parse HEAD)"
+
 echo -e "${ANSI_BLUE}tag: ${tag}${ANSI_RESET}"
+echo -e "${ANSI_BLUE}stable: ${stable:+yes}${stable:-no}${ANSI_RESET}"
+echo -e "${ANSI_BLUE}target: ${target}${ANSI_RESET}"
 
-# CONTAINER_ID="$(run docker run --detach --tty --volume="${PWD}/artifacts:/artifacts" --workdir=/artifacts/new "${DOCKER_IMAGE}" sh -c 'while true; do sleep 0.5; done')"
-# trap 'run docker kill "${CONTAINER_ID}"' EXIT
 
-container_exec() {
-    echo -e "::group::docker exec … ${ANSI_GREEN}$(printf '%q ' "$@")${ANSI_RESET}" 1>&2
-    echo docker exec --tty "${CONTAINER_ID}" "$@" && code=0 || code=$?
-    echo "::endgroup::"
-    return "${code}" 1>&2
-}
+# Update target repo tag.
+run git push -f "https://github.com/${GH_REPO}.git" "refs/tags/${tag}"
 
-kotasync_make() {
-    txz="$1"
-    mfst="$2"
-    shift 2
-    cmd=(kotasync make)
-    if [[ -f "../old/${mfst}" ]]; then
-        cmd+=(--reorder "../old/${mfst}")
-    fi
-    cmd+=("${txz}" "${mfst}")
-    container_exec "${cmd[@]}"
-}
-
-zsync_make() {
-    txz="$1"
-    mfst="$2"
-    shift 2
-    tar="${txz%.xz}"
-    tgz="${tar}.gz"
-    container_exec xzcat "${txz}" >"${tar}"
-    container_exec pigz -9 --rsyncable "${tar}"
-    cmd=(zsyncmake "${tgz}" -C -u "${tgz##*/}" -o "${mfst}")
-    container_exec "${cmd[@]}"
-}
-
-# if [[ "${GITHUB_REF_TYPE}" = 'tag' ]]; then
-
-#     [[ -n "${GITHUB_REF_NAME}" ]]
-#     channel='stable'
-#     tag="${GITHUB_REF_NAME}"
-#     draft=1
-
-# else
-
-#     channel='nightly'
-#     tag="${channel}"
-#     draft=''
-
-# fi
+# Create release.
+run gh release create ${stable:+--draft} --notes='.' ${stable:---prerelease} --target="${target}" --title="${tag}" "${tag}"
 
 # new_commit="$(git rev-parse HEAD)"
 # old_commit="$(gh release view "${tag}" --json targetCommitish | jq -r .targetCommitish || true)"
@@ -123,7 +95,6 @@ zsync_make() {
 # if [[ "${create_release}" -ne 0 ]]; then
 #     run git tag --force "${tag}"
 #     run git push -f "${GH_REPO}" "refs/tags/${tag}"
-#     run gh release create ${draft:+--draft} --notes='.' --prerelease --target="${new_commit}" --title="${tag}" "${tag}"
 # fi
 # artifacts=()
 # for a in artifacts/new/*; do
