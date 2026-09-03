@@ -1,0 +1,17 @@
+name: OTA
+
+on:
+  release:
+    types: [edited, published]
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+
+  update:
+    name: Update OTA release
+    runs-on: ubuntu-latest
+    steps:
+      - run: jq --color-output . <<<'${{ github.event }}'
