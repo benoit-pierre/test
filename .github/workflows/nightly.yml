@@ -38,6 +38,7 @@ jobs:
   build:
     name: Build
     needs: update
+    if:
       !cancelled() &&
       contains('skipped success', needs.update.result)
     uses: ./.github/workflows/_build.yml
