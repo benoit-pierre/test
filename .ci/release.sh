@@ -40,7 +40,7 @@ else
     stable=''
 fi
 
-target="$(git -c "${release_checkout}" rev-parse HEAD)"
+target="$(git -C "${release_checkout}" rev-parse HEAD)"
 
 if out="$(gh release view "${tag}" --json 'assets' | jq -r '.assets[].name')"; then
     readarray -t old_assets <<<"${out}"
