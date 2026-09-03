@@ -45,20 +45,21 @@ jobs:
 
       - run: echo "${GITHUB_WORKSPACE}"
 
-      # - name: Checkout release repo
-      #   if: inputs.gh_repo != github.repository
-      #   uses: actions/checkout@v7
-      #   with:
-      #     clean: false
-      #     ref: ${{ github.sha }}
-      #     repository: ${{ inputs.gh_repo }}
-      #     show-progress: false
-      #     sparse-checkout:
+      - name: Checkout release repo
+        if: inputs.gh_repo != github.repository
+        uses: actions/checkout@v7
+        with:
+          clean: false
+          path: repo
+          ref: ${{ github.sha }}
+          repository: ${{ inputs.gh_repo }}
+          show-progress: false
+          sparse-checkout:
 
       - name: Release
         env:
           GH_REPO: ${{ inputs.gh_repo }}
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
-        run: ./.ci/release.sh
+        run: ./.ci/release.sh ${{ inputs.gh_repo != github.repository && 'repo' || '.' }}
 
 # vim: foldmethod=marker foldlevel=0

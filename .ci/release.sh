@@ -18,14 +18,16 @@ run() {
     return "${code}"
 }
 
-[[ $# -eq 0 ]] || "no arguments expected, got $#"
+[[ $# -eq 1 ]] || "1 argument expected, got $#"
+release_checkout="$1"
+shift
 # shellcheck disable=2016
 [[ -n "${GH_REPO}" ]] || die '$GH_REPO is empty / not set'
 # shellcheck disable=2016
 [[ -n "${GH_TOKEN}" ]] || die '$GH_TOKEN is empty / not set'
 
-run git config user.name 'Github Actions'
-run git config user.email '<>'
+# run git config user.name 'Github Actions'
+# run git config user.email '<>'
 
 # We can't rely on `$GITHUB_REF` since we may be called from the nightly workflow.
 if tag="$(git describe --tag --exact-match --match='v[0-9]*')"; then
@@ -33,7 +35,7 @@ if tag="$(git describe --tag --exact-match --match='v[0-9]*')"; then
 else
     tag='nightly'
     stable=''
-    run git tag -m '' -f nightly
+    run git -C "${release_checkout}" tag -m '' -f nightly
 fi
 commit="$(git rev-parse HEAD)"
 
@@ -42,7 +44,7 @@ echo -e "${ANSI_BLUE}stable: ${stable:+yes}${stable:-no}${ANSI_RESET}"
 echo -e "${ANSI_BLUE}target: ${target}${ANSI_RESET}"
 
 # Update target repo tag.
-run git push -f "https://github.com/${GH_REPO}.git" "refs/tags/${tag}"
+run git -C "${release_checkout}" push -f origin "refs/tags/${tag}"
 
 # Create release.
 run gh release create ${stable:+--draft} --notes='.' ${stable:---prerelease} --target="${target}" --title="${tag}" "${tag}"
