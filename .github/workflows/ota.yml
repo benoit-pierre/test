@@ -14,4 +14,4 @@ jobs:
     name: Update OTA release
     runs-on: ubuntu-latest
     steps:
-      - run: jq --color-output . <<<'${{ github.event }}'
+      - run: jq --color-output . <<<'${{ toJSON(github.event) }}'
