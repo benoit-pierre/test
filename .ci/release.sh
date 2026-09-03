@@ -105,4 +105,13 @@ if [[ -n "${out}" ]]; then
     done
 fi
 
+# Trigger repo "new release" dispatch.
+run gh api \
+    --method POST \
+    -H 'Accept: application/vnd.github+json' \
+    -H 'X-GitHub-Api-Version: 2026-03-10' \
+    "/repos/${GH_REPO}/dispatches" \
+    -f 'event_type=new_release' \
+    -F "client_payload[release]=${tag}"
+
 # vim: sw=4
