@@ -33,13 +33,14 @@ shift 2
 [[ -n "${GH_TOKEN}" ]] || die '$GH_TOKEN is empty / not set'
 
 # We can't rely on `$GITHUB_REF` since we may be called from the nightly workflow.
-if tag="$(git describe --tag --exact-match --match='v[0-9]*')"; then
+if tag="$(git -c "${release_checkout}" describe --tag --exact-match --match='v[0-9]*')"; then
     stable=1
 else
     tag='nightly'
     stable=''
 fi
-target="$(git rev-parse HEAD)"
+
+target="$(git -c "${release_checkout}" rev-parse HEAD)"
 
 if out="$(gh release view "${tag}" --json 'assets' | jq -r '.assets[].name')"; then
     readarray -t old_assets <<<"${out}"
