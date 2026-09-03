@@ -50,6 +50,7 @@ jobs:
         with:
           clean: false
           path: checkout
+          fetch-tags: true
           ref: ${{ github.sha }}
           repository: ${{ inputs.gh_repo }}
           show-progress: false
