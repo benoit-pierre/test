@@ -24,14 +24,15 @@ run() {
 # shellcheck disable=2016
 [[ -n "${GH_TOKEN}" ]] || die '$GH_TOKEN is empty / not set'
 
+run git config user.name 'Github Actions'
+run git config user.email '<>'
+
 # We can't rely on `$GITHUB_REF` since we may be called from the nightly workflow.
 if tag="$(git describe --tag --exact-match --match='v[0-9]*')"; then
     stable=1
 else
     tag='nightly'
     stable=''
-    run git config user.name 'Github Actions'
-    run git config user.email ''
     run git tag -m '' -f nightly
 fi
 commit="$(git rev-parse HEAD)"
@@ -39,7 +40,6 @@ commit="$(git rev-parse HEAD)"
 echo -e "${ANSI_BLUE}tag: ${tag}${ANSI_RESET}"
 echo -e "${ANSI_BLUE}stable: ${stable:+yes}${stable:-no}${ANSI_RESET}"
 echo -e "${ANSI_BLUE}target: ${target}${ANSI_RESET}"
-
 
 # Update target repo tag.
 run git push -f "https://github.com/${GH_REPO}.git" "refs/tags/${tag}"
