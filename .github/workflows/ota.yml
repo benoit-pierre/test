@@ -1,8 +1,12 @@
 name: OTA
 
+# on:
+#   release:
+#     types: [edited, published]
+
 on:
-  release:
-    types: [edited, published]
+  repository_dispatch:
+    types: [new_release]
 
 defaults:
   run:
