@@ -22,10 +22,13 @@ master: [
 
 # Release.
 release: [
+  android-arm,
+  linux-x86_64,
+  kindlepw2,
   # macos
   # macos-.*,
   # others
-  linux-*,
+  # linux-.*,
   # android-.*,
   # cervantes,
   # kindle.*,

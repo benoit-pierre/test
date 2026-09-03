@@ -247,7 +247,6 @@ jobs:
       # # Check FFI cdecls are up-to-date. {{{
 
       # - name: Check FFI cdecls are up-to-date
-      #   id: ffi
       #   if: steps.build-restore.outputs.cache-hit != 'true' && matrix.check_ffi_cdecls
       #   run: |
       #     set -x
@@ -312,15 +311,24 @@ jobs:
       #   if: matrix.artifacts && startsWith(matrix.target, 'android-')
       #   run: uber-apk-signer --overwrite --apks ${{ matrix.artifacts }}
 
-      # - name: Upload artifacts
-      #   if: matrix.artifacts
-      #   uses: actions/upload-artifact@v7
-      #   with:
-      #     archive: false
-      #     name: koreader-${{ matrix.cache }}
-      #     path: |
-      #       ${{ matrix.artifacts }}
-      #       ${{ steps.ffi.outputs.tar && format('!{0}', steps.ffi.outputs.tar) || '' }}
+      - name: Fake artifacts
+        run: |
+          version="$(git describe --match='v[0-9]*')"
+          case '${{ matrix.id }}' in
+            android-arm) touch koreader-android-arm-${version}.apk ;;
+            android-arm64) touch koreader-android-arm64-${version}.apk ;;
+            linux-x86_64) touch "koreader-linux-x86_64-${version}.tar.xz" "koreader-${version}-x86_64.AppImage" "koreader_${version}-1_amd64.deb" ;;
+            kindlepw2) touch "koreader-kindlepw2-${version}.tar.xz" ;;
+            macos-arm64) touch "koreader-macos-11.0-arm64-${version}.7z" ;;
+          esac
+
+      - name: Upload artifacts
+        if: matrix.artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          archive: false
+          name: koreader-${{ matrix.cache }}
+          path: ${{ matrix.artifacts }}
 
       # # }}}
 
