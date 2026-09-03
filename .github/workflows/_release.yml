@@ -46,7 +46,6 @@ jobs:
       - run: echo "${GITHUB_WORKSPACE}"
 
       - name: Checkout release repo
-        if: inputs.gh_repo != github.repository
         uses: actions/checkout@v7
         with:
           clean: false
@@ -61,6 +60,6 @@ jobs:
         env:
           GH_REPO: ${{ inputs.gh_repo }}
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
-        run: ./.ci/release.sh ${{ inputs.gh_repo != github.repository && 'repo' || '.' }}
+        run: ./.ci/release.sh repo
 
 # vim: foldmethod=marker foldlevel=0

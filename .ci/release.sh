@@ -36,7 +36,6 @@ if tag="$(git describe --tag --exact-match --match='v[0-9]*')"; then
 else
     tag='nightly'
     stable=''
-    run git -C "${release_checkout}" tag -m '' -f nightly
 fi
 commit="$(git rev-parse HEAD)"
 
@@ -45,6 +44,7 @@ echo -e "${ANSI_BLUE}stable: ${stable:+yes}${stable:-no}${ANSI_RESET}"
 echo -e "${ANSI_BLUE}target: ${target}${ANSI_RESET}"
 
 # Update release repo tag.
+run git -C "${release_checkout}" tag -m '' -f "${tag}"
 run git -C "${release_checkout}" push -f origin "refs/tags/${tag}"
 
 # Create release.
