@@ -88,9 +88,11 @@ run gh release upload --clobber "${tag}" "${assets[@]}"
 
 # Cleanup left-overs from previous version.
 out="$(comm -23 <(printf '%s\n' "${old_assets[@]}" | sort) <(printf '%s\n' "${assets[@]}" | sed 's,^.*/,,;s,#.*$,,;' | sort))"
-readarray -t old_assets <<<"${out}"
-for a in "${old_assets[@]}"; do
-    run gh release delete-asset -y "${tag}" "${a}"
-done
+if [[ -n "${out}" ]]; then
+    readarray -t old_assets <<<"${out}"
+    for a in "${old_assets[@]}"; do
+        run gh release delete-asset -y "${tag}" "${a}"
+    done
+fi
 
 # vim: sw=4
