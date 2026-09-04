@@ -329,49 +329,49 @@ jobs:
       # https://github.com/actions/upload-artifact#766 is resolved.
 
       - name: Upload artifact (7z)
-        if: contains('7z', matrix.artifacts)
+        if: contains(matrix.artifacts, '7z')
         uses: &UPLOAD_ARTIFACT actions/upload-artifact@v7
         with:
           archive: false
           path: koreader-*.7z
 
       - name: Upload artifact (apk)
-        if: contains('apk', matrix.artifacts)
+        if: contains(matrix.artifacts, 'apk')
         uses: *UPLOAD_ARTIFACT
         with:
           archive: false
           path: koreader-*.apk
 
       - name: Upload artifact (AppImage)
-        if: contains('AppImage', matrix.artifacts)
+        if: contains(matrix.artifacts, 'AppImage')
         uses: *UPLOAD_ARTIFACT
         with:
           archive: false
           path: koreader-*.AppImage
 
       - name: Upload artifact (deb)
-        if: contains('deb', matrix.artifacts)
+        if: contains(matrix.artifacts, 'deb')
         uses: *UPLOAD_ARTIFACT
         with:
           archive: false
           path: koreader-*.deb
 
       - name: Upload artifact (tar.xz)
-        if: contains('tar.xz', matrix.artifacts)
+        if: contains(matrix.artifacts, 'tar.xz')
         uses: *UPLOAD_ARTIFACT
         with:
           archive: false
           path: koreader-*.tar.xz
 
       - name: Upload artifact (targz)
-        if: contains('targz', matrix.artifacts)
+        if: contains(matrix.artifacts, 'targz')
         uses: *UPLOAD_ARTIFACT
         with:
           archive: false
           path: koreader-*.targz
 
       - name: Upload artifact (zip)
-        if: contains('zip', matrix.artifacts)
+        if: contains(matrix.artifacts, 'zip')
         uses: *UPLOAD_ARTIFACT
         with:
           archive: false
