@@ -341,7 +341,12 @@ jobs:
               *.AppImage) cp /usr/bin/true "${a}" ;;
               *.deb) ar q "${a}" version.txt ;;
               *.targz) tar czf "${a}" version.txt ;;
-              *.tar.xz) tar cJf "${a}" version.txt ;;
+              *.tar.xz)
+                a="${a%.xz}"
+                tar cf "${a}" --record-size=512 version.txt
+                size="$(stat -c %s "${a}")"
+                xz -9 --block-list=$((size-512*2)),0 "$a"
+                ;;
             esac
           done
 

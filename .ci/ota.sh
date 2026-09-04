@@ -50,8 +50,6 @@ if out="$(gh release view --json assets --jq '.assets[].name | select(test("^kor
     run gh release download --directory="${assets_dir}/old" --pattern='koreader-*-latest-nightly.kotasync' ota
 fi
 
-container_exec ls
-
 # shellcheck disable=2164
 pushd "${assets_dir}"
 for a in koreader-{cervantes,kindle*,kobo*,pocketbook*,remarkable*,sony-prstux*}.{tar.xz,targz}; do
