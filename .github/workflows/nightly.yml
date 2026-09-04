@@ -32,6 +32,7 @@ jobs:
     uses: ./.github/workflows/_build.yml
     with:
       jobs: release
+      all_artifacts: true
 
   release:
     name: Release

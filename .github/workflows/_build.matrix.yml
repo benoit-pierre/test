@@ -14,6 +14,9 @@ on:
       fail_fast:
         default: false
         type: boolean
+      all_artifacts:
+        default: false
+        type: boolean
       # Internal.
       cache_epoch:
         default: 'Noogh4so'
@@ -279,7 +282,7 @@ jobs:
       # # Generate artifacts. {{{
 
       # - name: Install 7z (Android)
-      #   if: matrix.artifacts && startsWith(matrix.target, 'android-')
+      #   if: matrix.artifact && startsWith(matrix.target, 'android-')
       #   run: |
       #     set -x
       #     dist=linux-p7zip.7z
@@ -289,28 +292,29 @@ jobs:
       #     printf '%s\n' "${PWD}/7z" >>"${GITHUB_PATH}"
 
       # - name: Setup gradle (Android)
-      #   if: matrix.artifacts && startsWith(matrix.target, 'android-')
+      #   if: matrix.artifact && startsWith(matrix.target, 'android-')
       #   uses: gradle/actions/setup-gradle@v5
       #   with:
       #     add-job-summary: ${{ runner.debug == '1' && 'always' || 'never' }}
       #     cache-read-only: false
       #     gradle-version: wrapper
 
-      # - name: Generate artifacts
-      #   if: matrix.artifacts
-      #   env:
-      #     ANDROID_ASSETS_COMPRESSION: '-m0=flzma2 -mx=9'
-      #   # Note: ensure the build skeleton is created, so there are no dangling
-      #   # symlinks (e.g. `data/dict`) to trip 7zip during artifact generation…
-      #   run: make --assume-old=all skeleton update
+      - name: Generate artifacts
+        if: matrix.artifact
+        # env:
+        #   ANDROID_ASSETS_COMPRESSION: '-m0=flzma2 -mx=9'
+        # # Note: ensure the build skeleton is created, so there are no dangling
+        # # symlinks (e.g. `data/dict`) to trip 7zip during artifact generation…
+        run: echo make --assume-old=all skeleton ${{ inputs.all_artifacts && 'update' || format('update-{0}', matrix.artifact) }}
 
       # - name: Sign artifacts (Android)
-      #   if: matrix.artifacts && startsWith(matrix.target, 'android-')
-      #   run: uber-apk-signer --overwrite --apks ${{ matrix.artifacts }}
+      #   if: matrix.artifact && startsWith(matrix.target, 'android-')
+      #   run: uber-apk-signer --overwrite --apks koreader-*.apk
 
       - name: Fake artifacts
         run: |
           set -x
+          echo '${{ hashFiles("koreader-*.7z") }}'
           version="$(git describe --match='v[0-9]*')"
           echo "${version}" >version.txt
           artifacts=()
@@ -339,54 +343,54 @@ jobs:
       # Yes, we need to do this for each possible extension until
       # https://github.com/actions/upload-artifact#766 is resolved.
 
-      - name: Upload artifact (7z)
-        if: contains(matrix.artifacts, '7z')
-        uses: &UPLOAD_ARTIFACT actions/upload-artifact@v7
-        with:
-          archive: false
-          path: koreader-*.7z
+      # - name: Upload artifact (7z)
+      #   if: contains(matrix.artifacts, '7z')
+      #   uses: &UPLOAD_ARTIFACT actions/upload-artifact@v7
+      #   with:
+      #     archive: false
+      #     path: koreader-*.7z
 
-      - name: Upload artifact (apk)
-        if: contains(matrix.artifacts, 'apk')
-        uses: *UPLOAD_ARTIFACT
-        with:
-          archive: false
-          path: koreader-*.apk
+      # - name: Upload artifact (apk)
+      #   if: contains(matrix.artifacts, 'apk')
+      #   uses: *UPLOAD_ARTIFACT
+      #   with:
+      #     archive: false
+      #     path: koreader-*.apk
 
-      - name: Upload artifact (AppImage)
-        if: contains(matrix.artifacts, 'AppImage')
-        uses: *UPLOAD_ARTIFACT
-        with:
-          archive: false
-          path: koreader-*.AppImage
+      # - name: Upload artifact (appimage)
+      #   if: contains(matrix.artifacts, 'appimage')
+      #   uses: *UPLOAD_ARTIFACT
+      #   with:
+      #     archive: false
+      #     path: koreader-*.AppImage
 
-      - name: Upload artifact (deb)
-        if: contains(matrix.artifacts, 'deb')
-        uses: *UPLOAD_ARTIFACT
-        with:
-          archive: false
-          path: koreader_*.deb
+      # - name: Upload artifact (deb)
+      #   if: contains(matrix.artifacts, 'deb')
+      #   uses: *UPLOAD_ARTIFACT
+      #   with:
+      #     archive: false
+      #     path: koreader_*.deb
 
-      - name: Upload artifact (tar.xz)
-        if: contains(matrix.artifacts, 'tar.xz')
-        uses: *UPLOAD_ARTIFACT
-        with:
-          archive: false
-          path: koreader-*.tar.xz
+      # - name: Upload artifact (tar.xz)
+      #   if: contains(matrix.artifacts, 'tar.xz')
+      #   uses: *UPLOAD_ARTIFACT
+      #   with:
+      #     archive: false
+      #     path: koreader-*.tar.xz
 
-      - name: Upload artifact (targz)
-        if: contains(matrix.artifacts, 'targz')
-        uses: *UPLOAD_ARTIFACT
-        with:
-          archive: false
-          path: koreader-*.targz
+      # - name: Upload artifact (targz)
+      #   if: contains(matrix.artifacts, 'targz')
+      #   uses: *UPLOAD_ARTIFACT
+      #   with:
+      #     archive: false
+      #     path: koreader-*.targz
 
-      - name: Upload artifact (zip)
-        if: contains(matrix.artifacts, 'zip')
-        uses: *UPLOAD_ARTIFACT
-        with:
-          archive: false
-          path: koreader-*.zip
+      # - name: Upload artifact (zip)
+      #   if: contains(matrix.artifacts, 'zip')
+      #   uses: *UPLOAD_ARTIFACT
+      #   with:
+      #     archive: false
+      #     path: koreader-*.zip
 
       # }}}
 

@@ -79,8 +79,7 @@ macos: # {{{
     cache_size: 256MB
     target: macos
     test: true
-    artifacts:
-      - 7z
+    artifact: 7z
 
   - <<: *MACOS
     id: macos-x86_64
@@ -102,8 +101,7 @@ platform:
     image: koreader/koandroid:3.0.0-22.04
     makeflags: PARALLEL_JOBS=5
     cache_size: 260M
-    artifacts:
-      - apk
+    artifact: apk
 
   - <<: *ANDROID
     id: android-arm64
@@ -130,10 +128,7 @@ platform:
     makeflags: PARALLEL_JOBS=5
     cache_size: 415M
     test: true
-    artifacts:
-      - AppImage
-      - deb
-      - tar.xz
+    artifact: appimage
 
   # FIXME: does not work, no support for using a docker image with
   # the `--platform=…` docker argument (see `build.matrix.yml`)…
@@ -153,10 +148,7 @@ platform:
     job: Cervantes
     image: koreader/kocervantes:3.0.0-22.04
     makeflags: PARALLEL_JOBS=5
-    artifacts: &PLATFORM_ARTIFACTS
-      - tar.xz
-      - targz
-      - zip
+    artifact: txz
 
   # kindle {{{
 
@@ -166,7 +158,7 @@ platform:
     image: koreader/kokindle:3.0.0-22.04
     makeflags: PARALLEL_JOBS=5
     cache_size: 390M
-    artifacts: *PLATFORM_ARTIFACTS
+    artifact: txz
 
   - <<: *KINDLE
     id: kindlehf
@@ -189,7 +181,7 @@ platform:
     job: Kobo
     image: koreader/kokobo:3.0.0-22.04
     makeflags: PARALLEL_JOBS=5
-    artifacts: *PLATFORM_ARTIFACTS
+    artifact: txz
 
   - <<: *KOBO
     id: kobov5
@@ -204,7 +196,7 @@ platform:
     job: PocketBook
     image: koreader/kopb:3.0.0-22.04
     makeflags: PARALLEL_JOBS=5
-    artifacts: *PLATFORM_ARTIFACTS
+    artifact: txz
 
   - <<: *POCKETBOOK
     id: pocketbookhf
@@ -219,7 +211,7 @@ platform:
     job: Remarkable
     image: koreader/koremarkable:3.0.0-22.04
     makeflags: PARALLEL_JOBS=5
-    artifacts: *PLATFORM_ARTIFACTS
+    artifact: txz
 
   - <<: *REMARKABLE
     id: remarkable-aarch64
@@ -231,7 +223,7 @@ platform:
     job: Sony PRSTUX
     image: koreader/kodeb:3.0.0-22.04
     makeflags: PARALLEL_JOBS=5
-    artifacts: *PLATFORM_ARTIFACTS
+    artifact: txz
 
 # }}}
 
