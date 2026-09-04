@@ -310,6 +310,7 @@ jobs:
 
       - name: Fake artifacts
         run: |
+          set -x
           version="$(git describe --match='v[0-9]*')"
           echo "${version}" >version.txt
           artifacts=()
@@ -364,7 +365,7 @@ jobs:
         uses: *UPLOAD_ARTIFACT
         with:
           archive: false
-          path: koreader-*.deb
+          path: koreader_*.deb
 
       - name: Upload artifact (tar.xz)
         if: contains(matrix.artifacts, 'tar.xz')
