@@ -311,6 +311,7 @@ jobs:
       - name: Fake artifacts
         run: |
           version="$(git describe --match='v[0-9]*')"
+          echo "${version}" >version.txt
           artifacts=()
           case '${{ matrix.id }}' in
             android-arm) artifacts+=(koreader-android-arm-${version}.apk) ;;
@@ -319,7 +320,16 @@ jobs:
             kindlepw2) artifacts+=("koreader-kindlepw2-${version}.tar.xz" "koreader-kindlepw2-${version}.targz" "koreader-kindlepw2-${version}.zip") ;;
             macos-arm64) artifacts+=("koreader-macos-11.0-arm64-${version}.7z") ;;
           esac
-          for a in "${artifacts[@]}"; do echo "${version}" >"${a}"; done
+          for a in "${artifacts[@]}"; do
+            case "${a}" in
+              *.7z) 7z a "${a}" version.txt ;;
+              *.apk | *.zip) zip "${a}" version.txt ;;
+              *.AppImage) cp /usr/bin/true "${a}" ;;
+              *.deb) ar q "${a}" version.txt ;;
+              *.tgz) tar czf "${a}" version.txt ;;
+              *.tar.xz) tar cJf "${a}" version.txt ;;
+            esac
+          done
 
       # # }}}
 
