@@ -128,8 +128,10 @@ platform:
     makeflags: PARALLEL_JOBS=5
     cache_size: 415M
     test: true
-    update_target: update-appimage
-    artifacts: koreader-*.AppImage
+    artifacts: |
+      koreader-*.AppImage
+      koreader-*.deb
+      koreader-*.tar.xz
 
   # FIXME: does not work, no support for using a docker image with
   # the `--platform=…` docker argument (see `build.matrix.yml`)…
@@ -149,8 +151,10 @@ platform:
     job: Cervantes
     image: koreader/kocervantes:3.0.0-22.04
     makeflags: PARALLEL_JOBS=5
-    update_target: update-txz
-    artifacts: koreader-*.tar.xz
+    artifacts: &PLATFORM_ARTIFACTS |
+      koreader-*.tar.xz
+      koreader-*.targz
+      koreader-*.zip
 
   # kindle {{{
 
@@ -160,8 +164,7 @@ platform:
     image: koreader/kokindle:3.0.0-22.04
     makeflags: PARALLEL_JOBS=5
     cache_size: 390M
-    update_target: update-txz
-    artifacts: koreader-*.tar.xz
+    artifacts: *PLATFORM_ARTIFACTS
 
   - <<: *KINDLE
     id: kindlehf
@@ -184,8 +187,7 @@ platform:
     job: Kobo
     image: koreader/kokobo:3.0.0-22.04
     makeflags: PARALLEL_JOBS=5
-    update_target: update-txz
-    artifacts: koreader-*.tar.xz
+    artifacts: *PLATFORM_ARTIFACTS
 
   - <<: *KOBO
     id: kobov5
@@ -200,8 +202,7 @@ platform:
     job: PocketBook
     image: koreader/kopb:3.0.0-22.04
     makeflags: PARALLEL_JOBS=5
-    update_target: update-txz
-    artifacts: koreader-*.tar.xz
+    artifacts: *PLATFORM_ARTIFACTS
 
   - <<: *POCKETBOOK
     id: pocketbookhf
@@ -216,8 +217,7 @@ platform:
     job: Remarkable
     image: koreader/koremarkable:3.0.0-22.04
     makeflags: PARALLEL_JOBS=5
-    update_target: update-txz
-    artifacts: koreader-*.tar.xz
+    artifacts: *PLATFORM_ARTIFACTS
 
   - <<: *REMARKABLE
     id: remarkable-aarch64
@@ -229,8 +229,7 @@ platform:
     job: Sony PRSTUX
     image: koreader/kodeb:3.0.0-22.04
     makeflags: PARALLEL_JOBS=5
-    update_target: update-txz
-    artifacts: koreader-*.tar.xz
+    artifacts: *PLATFORM_ARTIFACTS
 
 # }}}
 

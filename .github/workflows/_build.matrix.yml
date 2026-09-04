@@ -302,7 +302,7 @@ jobs:
       #     ANDROID_ASSETS_COMPRESSION: '-m0=flzma2 -mx=9'
       #   # Note: ensure the build skeleton is created, so there are no dangling
       #   # symlinks (e.g. `data/dict`) to trip 7zip during artifact generation…
-      #   run: make --assume-old=all skeleton ${{ matrix.update_target || 'update' }}
+      #   run: make --assume-old=all skeleton update
 
       # - name: Sign artifacts (Android)
       #   if: matrix.artifacts && startsWith(matrix.target, 'android-')
@@ -316,7 +316,7 @@ jobs:
             android-arm) artifacts+=(koreader-android-arm-${version}.apk) ;;
             android-arm64) artifacts+=(koreader-android-arm64-${version}.apk) ;;
             linux-x86_64) artifacts+=("koreader-linux-x86_64-${version}.tar.xz" "koreader-${version}-x86_64.AppImage" "koreader_${version}-1_amd64.deb") ;;
-            kindlepw2) artifacts+=("koreader-kindlepw2-${version}.tar.xz") ;;
+            kindlepw2) artifacts+=("koreader-kindlepw2-${version}.tar.xz" "koreader-kindlepw2-${version}.targz" "koreader-kindlepw2-${version}.zip") ;;
             macos-arm64) artifacts+=("koreader-macos-11.0-arm64-${version}.7z") ;;
           esac
           for a in "${artifacts[@]}"; do echo "${version}" >"${a}"; done
