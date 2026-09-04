@@ -79,7 +79,8 @@ macos: # {{{
     cache_size: 256MB
     target: macos
     test: true
-    artifacts: koreader-*.7z
+    artifacts:
+      - 7z
 
   - <<: *MACOS
     id: macos-x86_64
@@ -101,7 +102,8 @@ platform:
     image: koreader/koandroid:3.0.0-22.04
     makeflags: PARALLEL_JOBS=5
     cache_size: 260M
-    artifacts: koreader-*.apk
+    artifacts:
+      - apk
 
   - <<: *ANDROID
     id: android-arm64
@@ -128,10 +130,10 @@ platform:
     makeflags: PARALLEL_JOBS=5
     cache_size: 415M
     test: true
-    artifacts: |
-      koreader-*.AppImage
-      koreader-*.deb
-      koreader-*.tar.xz
+    artifacts:
+      - AppImage
+      - deb
+      - tar.xz
 
   # FIXME: does not work, no support for using a docker image with
   # the `--platform=…` docker argument (see `build.matrix.yml`)…
@@ -151,10 +153,10 @@ platform:
     job: Cervantes
     image: koreader/kocervantes:3.0.0-22.04
     makeflags: PARALLEL_JOBS=5
-    artifacts: &PLATFORM_ARTIFACTS |
-      koreader-*.tar.xz
-      koreader-*.targz
-      koreader-*.zip
+    artifacts: &PLATFORM_ARTIFACTS
+      - tar.xz
+      - targz
+      - zip
 
   # kindle {{{
 

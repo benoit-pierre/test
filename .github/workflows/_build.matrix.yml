@@ -276,7 +276,7 @@ jobs:
       #   if: matrix.test
       #   run: ./base/utils/fake_tty.py make --assume-old=all test
 
-      # # Generate / upload artifacts. {{{
+      # # Generate artifacts. {{{
 
       # - name: Install 7z (Android)
       #   if: matrix.artifacts && startsWith(matrix.target, 'android-')
@@ -321,14 +321,63 @@ jobs:
           esac
           for a in "${artifacts[@]}"; do echo "${version}" >"${a}"; done
 
-      - name: Upload artifacts
-        if: matrix.artifacts
+      # # }}}
+
+      # Upload artifacts. {{{
+
+      # Yes, we need to do this for each possible extension until
+      # https://github.com/actions/upload-artifact#766 is resolved.
+
+      - &UPLOAD_ARTIFACT
+        name: Upload artifact (7z)
+        if: contains('7z', matrix.artifacts)
         uses: actions/upload-artifact@v7
         with:
           archive: false
-          name: koreader-${{ matrix.cache }}
-          path: ${{ matrix.artifacts }}
+          path: koreader-*.7z
 
-      # # }}}
+      - <<: *UPLOAD_ARTIFACT
+        name: Upload artifact (apk)
+        if: contains('apk', matrix.artifacts)
+        with:
+          archive: false
+          path: koreader-*.apk
+
+      - <<: *UPLOAD_ARTIFACT
+        name: Upload artifact (AppImage)
+        if: contains('AppImage', matrix.artifacts)
+        with:
+          archive: false
+          path: koreader-*.AppImage
+
+      - <<: *UPLOAD_ARTIFACT
+        name: Upload artifact (deb)
+        if: contains('deb', matrix.artifacts)
+        with:
+          archive: false
+          path: koreader-*.deb
+
+      - <<: *UPLOAD_ARTIFACT
+        name: Upload artifact (tar.xz)
+        if: contains('tar.xz', matrix.artifacts)
+        with:
+          archive: false
+          path: koreader-*.tar.xz
+
+      - <<: *UPLOAD_ARTIFACT
+        name: Upload artifact (targz)
+        if: contains('targz', matrix.artifacts)
+        with:
+          archive: false
+          path: koreader-*.targz
+
+      - <<: *UPLOAD_ARTIFACT
+        name: Upload artifact (zip)
+        if: contains('zip', matrix.artifacts)
+        with:
+          archive: false
+          path: koreader-*.zip
+
+      # }}}
 
 # vim: foldmethod=marker foldlevel=0
