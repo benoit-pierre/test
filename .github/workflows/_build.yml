@@ -11,11 +11,6 @@ on:
         default: 'default'
         required: false
         type: string
-      publish:
-        description: 'Publish a release to GitHub'
-        default: false
-        required: false
-        type: boolean
   workflow_dispatch:
     inputs: *INPUTS
 
