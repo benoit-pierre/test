@@ -29,10 +29,10 @@ kotasync_make() {
     txz="$1"
     shift 1
     new_kotasync="${txz%.tar.xz}.kotasync"
-    old_kotasync="old/${txz%-v[0-9]*}-latest-nightly.kotasync"
+    nightly_kotasync="nightly/${txz%-v[0-9]*}-latest-nightly.kotasync"
     cmd=(kotasync make)
-    if [[ -e "${old_kotasync}" ]]; then
-        cmd+=(--reorder "${old_kotasync}")
+    if [[ -e "${nightly_kotasync}" ]]; then
+        cmd+=(--reorder "${nightly_kotasync}")
     fi
     cmd+=("${txz}" "${new_kotasync}")
     container_exec "${cmd[@]}"
@@ -45,13 +45,14 @@ zsync_make() {
     container_exec "${cmd[@]}"
 }
 
+# Fetch latest nightly kotasync files.
 if out="$(gh release view --json assets --jq '.assets[].name | select(test("^koreader-.*-latest-nightly\\.kotasync$"))' ota)" && [[ -n "${out}" ]]; then
-    run mkdir -p "${assets_dir}/old"
-    run gh release download --directory="${assets_dir}/old" --pattern='koreader-*-latest-nightly.kotasync' ota
+    run gh release download --directory="${assets_dir}/nightly" --pattern='koreader-*-latest-nightly.kotasync' ota
+    trap 'run rm -rf "${assets_dir}/nightly"' EXIT
 fi
 
-# shellcheck disable=2164
-pushd "${assets_dir}"
+# Generate kotasync & zync individual files.
+pushd "${assets_dir}" || exit
 for a in koreader-{cervantes,kindle*,kobo*,pocketbook*,remarkable*,sony-prstux*}.{tar.xz,targz}; do
     [[ -e "${a}" ]] || continue
     case "${a}" in
@@ -59,11 +60,9 @@ for a in koreader-{cervantes,kindle*,kobo*,pocketbook*,remarkable*,sony-prstux*}
         *.targz) zsync_make "${a}" ;;
     esac
 done
-# shellcheck disable=2164
-popd
+popd || exit
 
-run rm -rf "${assets_dir}/old"
-
+# Create latest stable / nightly files.
 for a in "${assets_dir}"/*.{kotasync,zsync}; do
     [[ -e "${a}" ]] || continue
     run cp "${a}" "${a%-v[0-9]*}-lastest-${channel}.${a##*.}"
