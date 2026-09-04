@@ -326,7 +326,7 @@ jobs:
               *.apk | *.zip) zip "${a}" version.txt ;;
               *.AppImage) cp /usr/bin/true "${a}" ;;
               *.deb) ar q "${a}" version.txt ;;
-              *.tgz) tar czf "${a}" version.txt ;;
+              *.targz) tar czf "${a}" version.txt ;;
               *.tar.xz) tar cJf "${a}" version.txt ;;
             esac
           done

@@ -10,7 +10,7 @@ default: &DEFAULT [
   linux-x86_64,
   # android-arm,
   # android-arm64,
-  # kindlepw2,
+  kindlepw2,
 ]
 
 # Extra jobs when on master.
