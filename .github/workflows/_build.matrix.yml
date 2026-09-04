@@ -314,7 +314,6 @@ jobs:
       - name: Fake artifacts
         run: |
           set -x
-          echo '${{ hashFiles('koreader-*.7z') }}'
           version="$(git describe --match='v[0-9]*')"
           echo "${version}" >version.txt
           artifacts=()
@@ -343,54 +342,54 @@ jobs:
       # Yes, we need to do this for each possible extension until
       # https://github.com/actions/upload-artifact#766 is resolved.
 
-      # - name: Upload artifact (7z)
-      #   if: contains(matrix.artifacts, '7z')
-      #   uses: &UPLOAD_ARTIFACT actions/upload-artifact@v7
-      #   with:
-      #     archive: false
-      #     path: koreader-*.7z
+      - name: Upload artifact (7z)
+        if: hashFiles('koreader-*.7z')
+        uses: &UPLOAD_ARTIFACT actions/upload-artifact@v7
+        with:
+          archive: false
+          path: koreader-*.7z
 
-      # - name: Upload artifact (apk)
-      #   if: contains(matrix.artifacts, 'apk')
-      #   uses: *UPLOAD_ARTIFACT
-      #   with:
-      #     archive: false
-      #     path: koreader-*.apk
+      - name: Upload artifact (apk)
+        if: hashFiles('koreader-*.apk')
+        uses: *UPLOAD_ARTIFACT
+        with:
+          archive: false
+          path: koreader-*.apk
 
-      # - name: Upload artifact (appimage)
-      #   if: contains(matrix.artifacts, 'appimage')
-      #   uses: *UPLOAD_ARTIFACT
-      #   with:
-      #     archive: false
-      #     path: koreader-*.AppImage
+      - name: Upload artifact (appimage)
+        if: hashFiles('koreader-*.AppImage')
+        uses: *UPLOAD_ARTIFACT
+        with:
+          archive: false
+          path: koreader-*.AppImage
 
-      # - name: Upload artifact (deb)
-      #   if: contains(matrix.artifacts, 'deb')
-      #   uses: *UPLOAD_ARTIFACT
-      #   with:
-      #     archive: false
-      #     path: koreader_*.deb
+      - name: Upload artifact (deb)
+        if: hashFiles('koreader_*.deb')
+        uses: *UPLOAD_ARTIFACT
+        with:
+          archive: false
+          path: koreader_*.deb
 
-      # - name: Upload artifact (tar.xz)
-      #   if: contains(matrix.artifacts, 'tar.xz')
-      #   uses: *UPLOAD_ARTIFACT
-      #   with:
-      #     archive: false
-      #     path: koreader-*.tar.xz
+      - name: Upload artifact (tar.xz)
+        if: hashFiles('koreader-*.tar.xz')
+        uses: *UPLOAD_ARTIFACT
+        with:
+          archive: false
+          path: koreader-*.tar.xz
 
-      # - name: Upload artifact (targz)
-      #   if: contains(matrix.artifacts, 'targz')
-      #   uses: *UPLOAD_ARTIFACT
-      #   with:
-      #     archive: false
-      #     path: koreader-*.targz
+      - name: Upload artifact (targz)
+        if: hashFiles('koreader-*.targz')
+        uses: *UPLOAD_ARTIFACT
+        with:
+          archive: false
+          path: koreader-*.targz
 
-      # - name: Upload artifact (zip)
-      #   if: contains(matrix.artifacts, 'zip')
-      #   uses: *UPLOAD_ARTIFACT
-      #   with:
-      #     archive: false
-      #     path: koreader-*.zip
+      - name: Upload artifact (zip)
+        if: hashFiles('koreader-*.zip')
+        uses: *UPLOAD_ARTIFACT
+        with:
+          archive: false
+          path: koreader-*.zip
 
       # }}}
 

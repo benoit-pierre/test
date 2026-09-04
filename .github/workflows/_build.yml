@@ -11,6 +11,11 @@ on:
         default: 'default'
         required: false
         type: string
+      all_artifacts:
+        description: 'Generate all artifacts'
+        default: false
+        required: false
+        type: boolean
   workflow_dispatch:
     inputs: *INPUTS
 
