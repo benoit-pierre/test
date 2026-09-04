@@ -314,7 +314,7 @@ jobs:
       - name: Fake artifacts
         run: |
           set -x
-          echo '${{ hashFiles("koreader-*.7z") }}'
+          echo '${{ hashFiles('koreader-*.7z') }}'
           version="$(git describe --match='v[0-9]*')"
           echo "${version}" >version.txt
           artifacts=()
