@@ -71,7 +71,10 @@ run git -C "${release_checkout}" tag -m '' -f "${tag}"
 run git -C "${release_checkout}" push -f origin "refs/tags/${tag}"
 
 # Create / update release.
-run gh release "${mode}" ${draft:+--draft} --notes='.' ${prerelease:+--prerelease} --target="${target}" --title="${tag}" "${tag}"
+case "${mode}" in
+    create) run gh release create ${draft:+--draft} ${prerelease:+--prerelease} --target="${target}" --title="${tag}" "${tag}" ;;
+    edit) run gh release edit --target="${target}" "${tag}" ;;
+esac
 
 # Upload assets.
 run gh release upload --clobber "${tag}" "${assets[@]}"
