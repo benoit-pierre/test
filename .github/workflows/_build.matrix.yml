@@ -328,52 +328,51 @@ jobs:
       # Yes, we need to do this for each possible extension until
       # https://github.com/actions/upload-artifact#766 is resolved.
 
-      - &UPLOAD_ARTIFACT
-        name: Upload artifact (7z)
+      - name: Upload artifact (7z)
         if: contains('7z', matrix.artifacts)
-        uses: actions/upload-artifact@v7
+        uses: &UPLOAD_ARTIFACT actions/upload-artifact@v7
         with:
           archive: false
           path: koreader-*.7z
 
-      - <<: *UPLOAD_ARTIFACT
-        name: Upload artifact (apk)
+      - name: Upload artifact (apk)
         if: contains('apk', matrix.artifacts)
+        uses: *UPLOAD_ARTIFACT
         with:
           archive: false
           path: koreader-*.apk
 
-      - <<: *UPLOAD_ARTIFACT
-        name: Upload artifact (AppImage)
+      - name: Upload artifact (AppImage)
         if: contains('AppImage', matrix.artifacts)
+        uses: *UPLOAD_ARTIFACT
         with:
           archive: false
           path: koreader-*.AppImage
 
-      - <<: *UPLOAD_ARTIFACT
-        name: Upload artifact (deb)
+      - name: Upload artifact (deb)
         if: contains('deb', matrix.artifacts)
+        uses: *UPLOAD_ARTIFACT
         with:
           archive: false
           path: koreader-*.deb
 
-      - <<: *UPLOAD_ARTIFACT
-        name: Upload artifact (tar.xz)
+      - name: Upload artifact (tar.xz)
         if: contains('tar.xz', matrix.artifacts)
+        uses: *UPLOAD_ARTIFACT
         with:
           archive: false
           path: koreader-*.tar.xz
 
-      - <<: *UPLOAD_ARTIFACT
-        name: Upload artifact (targz)
+      - name: Upload artifact (targz)
         if: contains('targz', matrix.artifacts)
+        uses: *UPLOAD_ARTIFACT
         with:
           archive: false
           path: koreader-*.targz
 
-      - <<: *UPLOAD_ARTIFACT
-        name: Upload artifact (zip)
+      - name: Upload artifact (zip)
         if: contains('zip', matrix.artifacts)
+        uses: *UPLOAD_ARTIFACT
         with:
           archive: false
           path: koreader-*.zip
