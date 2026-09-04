@@ -51,8 +51,8 @@ jobs:
         include: ${{ fromJSON(inputs.jobs) }}
 
     name: ${{ matrix.job }}
-    runs-on: 'ubuntu-latest' #${{ matrix.runs-on || 'ubuntu-latest' }}
-    # container: "${{ matrix.image && fromJSON(format('{{ \"image\": \"{0}\" }}', matrix.image, matrix.platform && format(', \"options\": \"--platform {0}\"', matrix.platform) || '')) || '' }}"
+    runs-on: ${{ matrix.runs-on || 'ubuntu-latest' }}
+    container: "${{ matrix.image && fromJSON(format('{{ \"image\": \"{0}\" }}', matrix.image, matrix.platform && format(', \"options\": \"--platform {0}\"', matrix.platform) || '')) || '' }}"
 
     env:
       BASH_ENV: '/home/ko/.bashrc'
