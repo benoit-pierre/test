@@ -320,8 +320,18 @@ jobs:
           case '${{ matrix.id }}' in
             android-arm) artifacts+=(koreader-android-arm-${version}.apk) ;;
             android-arm64) artifacts+=(koreader-android-arm64-${version}.apk) ;;
-            linux-x86_64) artifacts+=("koreader-linux-x86_64-${version}.tar.xz" "koreader-${version}-x86_64.AppImage" "koreader_${version}-1_amd64.deb") ;;
-            kindlepw2) artifacts+=("koreader-kindlepw2-${version}.tar.xz" "koreader-kindlepw2-${version}.targz" "koreader-kindlepw2-${version}.zip") ;;
+            linux-x86_64)
+              artifacts+=("koreader-${version}-x86_64.AppImage")
+              if [[ ${{ inputs.all_artifacts }} = true ]]; then
+                artifacts+=("koreader-linux-x86_64-${version}.tar.xz" "koreader_${version}-1_amd64.deb")
+              fi
+              ;;
+            kindlepw2)
+              artifacts+=("koreader-kindlepw2-${version}.tar.xz")
+              if [[ ${{ inputs.all_artifacts }} = true ]]; then
+                artifacts+=("koreader-kindlepw2-${version}.targz" "koreader-kindlepw2-${version}.zip")
+              fi
+              ;;
             macos-arm64) artifacts+=("koreader-macos-11.0-arm64-${version}.7z") ;;
           esac
           for a in "${artifacts[@]}"; do
