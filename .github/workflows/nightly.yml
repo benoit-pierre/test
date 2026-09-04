@@ -15,14 +15,6 @@ defaults:
 
 jobs:
   
-  update:
-    name: Update
-    runs-on: ubuntu-latest
-    if: vars.ORIGIN_GH_REPO
-    steps:
-      - name: Update fork
-        run: gh repo sync --source ${{ vars.ORIGIN_GH_REPO }}
-
   build:
     name: Build
     needs: update

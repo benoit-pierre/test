@@ -10,6 +10,24 @@ ANSI_GREEN="\033[32;1m"
 ANSI_BLUE="\033[34;1m"
 ANSI_RESET="\033[0m"
 
+DRY_RUN="${DRY_RUN:-}"
+
+die() {
+    echo -e "${ANSI_RED}$*${ANSI_RESET}" 1>&2
+    exit 1
+}
+
+run() {
+    echo -e "::group::${ANSI_GREEN}$(printf '%q ' "$@")${ANSI_RESET}" 1>&2
+    if [[ -n "${DRY_RUN}" ]]; then
+        code=0
+    else
+        "$@" && code=0 || code=$?
+    fi
+    echo "::endgroup::" 1>&2
+    return "${code}"
+}
+
 travis_retry() {
     local result=0
     local count=1
