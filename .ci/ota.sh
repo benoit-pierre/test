@@ -11,7 +11,7 @@ assets_dir="$1"
 channel="$2"
 shift 2
 
-CONTAINER_ID="$(run docker run --detach --tty --volume="${assets_dir}:/work" --work=/work "${DOCKER_IMAGE}" sh -c 'while true; do sleep 0.25; done')"
+CONTAINER_ID="$(run docker run --detach --tty --volume="${assets_dir}:/work" --workdir=/work "${DOCKER_IMAGE}" sh -c 'while true; do sleep 0.25; done')"
 trap 'run docker kill "${CONTAINER_ID}"' EXIT
 
 container_exec() {
