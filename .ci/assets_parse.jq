@@ -40,7 +40,6 @@ def asset_parse:
     // (
       capture("/koreader-" + $platform_rx + "-latest-(?<version>[a-z]+)" + $extension_rx)
       | .base_version = .version
-      | .short_version = .version
       | .sort_version = [666]
     )
     // error("unsupported asset: " + .)
@@ -48,13 +47,13 @@ def asset_parse:
   # Finalize.
   | .file = $file
   | .platform_name = ($platform_name[.platform] // error("invalid platform: " + .platform))
-  | .short_version = .short_version // .base_version
-  | .sort_version = .sort_version // [
+  | .sort_version = (.sort_version // [
+    # Sort by version (decreasing, tie-break on platform & extension).
     (.base_version | split(".") | map(tonumber | -.)),
-    .commit_number // 0 | tonumber,
+    (.commit_number // 0 | tonumber | -.),
     .platform,
     .extension
-  ] #| debug
+  ]) #| debug
 ;
 
 # vim: sw=2
