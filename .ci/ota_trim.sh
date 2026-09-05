@@ -9,7 +9,9 @@ source "${CI_DIR}/common.sh"
 out="$(gh release view nightly --json 'assets' --template '{{ range .assets }}{{ .name }}{{ "\n" }}{{ end }}')"
 readarray -t assets <<<"${out}"
 
-# Trim assets: keep the last stable & last 3 nightlies.
+# Trim assets:
+# - keep the last stable
+# - keep the last 3 nightlies more recent the latest stable
 out="$("${CI_DIR}/assets_trim.sh" 1 3 "${assets[@]}")"
 [[ -n "${out}" ]] && readarray -t assets <<<"${out}" || assets=()
 
