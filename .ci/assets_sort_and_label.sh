@@ -4,4 +4,4 @@ CI_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=/dev/null
 source "${CI_DIR}/common.sh"
 
-jq --raw-output --from-file "${CI_DIR}/assets_sort_and_label.jq" --null-input --args "$@"
+jq --library-path "${CI_DIR}" --raw-output --from-file "${CI_DIR}/assets_sort_and_label.jq" --null-input --args "$@"

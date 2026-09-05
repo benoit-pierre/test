@@ -12,12 +12,12 @@ shift 1
 # Download release assets.
 run gh release download --dir="${assets_dir}" "${release_tag}"
 
-# Run the OTA pass.
-"${CI_DIR}/ota.sh" "${assets_dir}" stable
+# Generate OTA assets.
+"${CI_DIR}/ota_generate.sh" "${assets_dir}" stable
 
 # Sort & label assets.
 out="$("${CI_DIR}/assets_sort_and_label.sh" "${assets_dir}"/*)"
 readarray -t assets <<<"${out}"
 
 # And upload them to the OTA release.
-run gh release upload --clobber ota "${assets[@]}"
+run gh release upload --clobber OTA "${assets[@]}"
