@@ -4,6 +4,10 @@ include "assets_parse";
 # Sort by version (decreasing, tie-break on platform & extension).
 | sort_by([(.base_version | split(".") | map(tonumber | -.)), .commit_number, .platform, .extension])
 # Label.
-| .[] | .file + "#" + ([.version, .platform_name, "(" + .extension + ")"] | join(" "))
+| .[] | .file + "#" + ([
+  if .commit_number then .version + "-" + (.commit_number | tostring) else .version end,
+  .platform_name,
+  "(" + .extension + ")"
+] | join(" "))
 
 # vim: sw=2

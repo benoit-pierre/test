@@ -42,7 +42,7 @@ jobs:
         id: generate
         run: |
           set -o noglob
-          >>"${GITHUB_OUTPUT}" ./.ci/build.prepare.sh ${{ inputs.jobs }}
+          ./.ci/build.prepare.sh ${{ inputs.jobs }} >>"${GITHUB_OUTPUT}"
     outputs:
       emulator: ${{ steps.generate.outputs.emulator }}
       macos: ${{ steps.generate.outputs.macos }}

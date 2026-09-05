@@ -8,7 +8,6 @@ source "${CI_DIR}/common.sh"
 assets_dir="$1"
 shift
 
-# We can't rely on `$GITHUB_REF` since we may be called from the nightly workflow.
 if tag_name="$(git describe --tag --exact-match --match='v[0-9]*')"; then
     channel='stable'
     draft=1
