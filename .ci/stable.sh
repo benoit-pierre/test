@@ -20,4 +20,4 @@ out="$("${CI_DIR}/assets_sort_and_label.sh" "${assets_dir}"/*)"
 readarray -t assets <<<"${out}"
 
 # And upload them to the OTA release.
-run gh release upload --clobber OTA "${assets[@]}"
+run gh release upload --clobber nightly "${assets[@]}"
