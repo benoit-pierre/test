@@ -65,8 +65,12 @@ run "${cmd[@]}"
 # Upload assets.
 run gh release upload --clobber "${tag_name}" "${assets[@]}"
 
-# Cleanup left-overs from previous version.
-if [[ "${channel}" = 'stable' ]]; then
+# Cleanup:
+if [[ "${channel}" = 'nightly' ]]; then
+    # - nightly: old versions
+    "${CI_DIR}/ota_trim.sh"
+else
+    # - stable: left-overs from previous version
     out="$(comm -23 <(printf '%s\n' "${old_assets[@]}" | sort) <(printf '%s\n' "${assets[@]}" | sed 's,^.*/,,;s,#.*$,,;' | sort))"
     if [[ -n "${out}" ]]; then
         readarray -t old_assets <<<"${out}"

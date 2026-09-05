@@ -49,12 +49,11 @@ def asset_parse:
   | .file = $file
   | .platform_name = ($platform_name[.platform] // error("invalid platform: " + .platform))
   | .sort_version = (.sort_version // [
-    # Sort by version (decreasing, tie-break on platform & extension).
-    (.base_version | split(".") | map(tonumber | -.)),
-    (.commit_number // 0 | tonumber | -.),
-    .platform,
-    .extension
-  ]) #| debug
+    (.base_version | split(".") | map(tonumber)),
+    (.commit_number // 0 | tonumber)
+  ])
+  | .sort_key = [.sort_version, .platform, .extension]
+ #| debug
 ;
 
 # vim: sw=2

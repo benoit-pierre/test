@@ -19,5 +19,8 @@ run gh release download --dir="${assets_dir}" "${release_tag}"
 out="$("${CI_DIR}/assets_label.sh" "${assets_dir}"/*)"
 readarray -t assets <<<"${out}"
 
-# And upload them to the OTA release.
+# Upload them to the OTA release.
 run gh release upload --clobber nightly "${assets[@]}"
+
+# And trim old versions.
+"${CI_DIR}/ota_trim.sh"
