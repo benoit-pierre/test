@@ -65,9 +65,9 @@ popd || exit
 # Create latest stable / nightly files.
 for a in "${assets_dir}"/*.{kotasync,zsync}; do
     [[ -e "${a}" ]] || continue
-    run cp "${a}" "${a%-v[0-9]*}-lastest-${channel}.${a##*.}"
+    run cp "${a}" "${a%-v[0-9]*}-latest-${channel}.${a##*.}"
     if [[ "${channel}" == 'stable' ]]; then
-        run cp "${a}" "${a%-v[0-9]*}-lastest-nightly.${a##*.}"
+        run cp "${a}" "${a%-v[0-9]*}-latest-nightly.${a##*.}"
     fi
 done
 

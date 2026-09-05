@@ -37,7 +37,7 @@
     # koreader-kindlepw2-latest-nightly.kotasync
     # koreader-kindlepw2-latest-stable.zsync
     // (
-      capture("/koreader-" + $platform_rx + "-latest" + "-(?<version>[a-z]+)" + $extension_rx)
+      capture("/koreader-" + $platform_rx + "-latest-(?<version>[a-z]+)" + $extension_rx)
       | .base_version = "-666"
     )
     // error("unsupported asset: " + .)
