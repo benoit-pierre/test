@@ -5,7 +5,7 @@ permissions:
 
 on:
   release:
-    types: [published, released]
+    types: [released]
 
 defaults:
   run:
@@ -21,8 +21,6 @@ jobs:
 
     steps:
 
-      - run: jq --color-output . <<<'${{ toJSON(github.event) }}'
-
       - name: Checkout
         uses: actions/checkout@v7
         with:
@@ -34,4 +32,4 @@ jobs:
         env:
           GH_REPO: ${{ inputs.gh_repo }}
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
-        run: echo ./.ci/stable.sh
+        run: ./.ci/stable.sh assets '${{ github.event.release.tag_name }}'

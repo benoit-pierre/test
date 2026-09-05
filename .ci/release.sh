@@ -41,10 +41,8 @@ if [[ "${tag}" = 'ota' ]]; then
     "${CI_DIR}/ota.sh" "${assets_dir}" "${channel}"
 fi
 
-# Label & sort assets.
-shopt -s extglob
-out="$(jq --raw-output --from-file .ci/release.label.jq --null-input --args "${assets_dir}"/*)"
-shopt -u extglob
+# Sort & label assets.
+out="$("${CI_DIR}/assets_sort_and_label.sh" "${assets_dir}"/*)"
 readarray -t assets <<<"${out}"
 
 # Setup git author.

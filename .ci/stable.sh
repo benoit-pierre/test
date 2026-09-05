@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+CI_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=/dev/null
+source "${CI_DIR}/common.sh"
+
+[[ $# -eq 2 ]] || "2 arguments expected, got $#"
+assets_dir="$1"
+release_tag="$1"
+shift 1
+
+# Download release assets.
+run gh release download --directory=assets "${release_tag}"
+
+# Run the OTA pass.
+"${CI_DIR}/ota.sh" assets stable
+
+# Sort & label assets.
+out="$("${CI_DIR}/assets_sort_and_label.sh" "${assets_dir}"/*)"
+readarray -t assets <<<"${out}"
+
+# And upload them to the OTA release.
+run gh release upload --clobber ota "${assets[@]}"
