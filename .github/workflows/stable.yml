@@ -1,0 +1,36 @@
+name: Stable
+
+permissions:
+  contents: read
+
+on:
+  release:
+    types: [published]
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+
+  update_ota:
+
+    environment: release
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          clean: false
+          show-progress: false
+          sparse-checkout: .ci
+
+      - name: Update
+        env:
+          GH_REPO: ${{ inputs.gh_repo }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: jq --color-output . <<<'${{ toJSON(github.event) }}'
+        # run: ./.ci/stable.sh
