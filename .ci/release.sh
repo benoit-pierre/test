@@ -56,7 +56,7 @@ readarray -t assets <<<"${out}"
 # Create / update release.
 cmd=(gh release "${mode}" --target="${target}")
 if [[ "${mode}" = 'create' ]]; then
-    cmd+=(${draft:+--draft} ${prerelease:+--prerelease} --title="${title}" --note='.')
+    cmd+=(${draft:+--draft} ${prerelease:+--prerelease} --title="${title}" --notes='')
 fi
 cmd+=("${tag_name}")
 run "${cmd[@]}"
