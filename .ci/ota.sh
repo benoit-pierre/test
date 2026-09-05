@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-declare -r DOCKER_IMAGE='koreader/nightswatcher:1.7.0'
+declare -r DOCKER_IMAGE='benoitpierre/nightswatcher:1.7.1'
 
 CI_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=/dev/null
