@@ -22,6 +22,8 @@ else
     title='OTA'
 fi
 
+target="$(git rev-parse HEAD)"
+
 if out="$(gh release view "${tag_name}" --json 'assets' | jq -r '.assets[].name')"; then
     readarray -t old_assets <<<"${out}"
     mode='edit'
@@ -35,6 +37,7 @@ echo -e "${ANSI_BLUE}tag_name  : ${tag_name}${ANSI_RESET}"
 echo -e "${ANSI_BLUE}draft     : ${draft:-0}${ANSI_RESET}"
 echo -e "${ANSI_BLUE}prerelease: ${prerelease:-0}${ANSI_RESET}"
 echo -e "${ANSI_BLUE}title     : ${title}${ANSI_RESET}"
+echo -e "${ANSI_BLUE}target    : ${target}${ANSI_RESET}"
 
 if [[ "${channel}" = 'nightly' ]]; then
     # Generate OTA assets.
@@ -51,7 +54,7 @@ out="$("${CI_DIR}/assets_sort_and_label.sh" "${assets_dir}"/*)"
 readarray -t assets <<<"${out}"
 
 # Create / update release.
-cmd=(gh release "${mode}" --target="${tag_name}")
+cmd=(gh release "${mode}" --target="${target}")
 if [[ "${mode}" = 'create' ]]; then
     cmd+=(${draft:+--draft} ${prerelease:+--prerelease} --title="${title}" --note='.')
 fi
