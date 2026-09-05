@@ -13,14 +13,14 @@ if tag_name="$(git describe --tag --exact-match --match='v[0-9]*')"; then
     channel='stable'
     draft=1
     prerelease=
+    target="${tag_name}"
 else
     channel='nightly'
     draft=
     prerelease=1
+    target='nightly'
     tag_name='OTA'
 fi
-
-target="$(git rev-parse HEAD)"
 
 if out="$(gh release view "${tag_name}" --json 'assets' | jq -r '.assets[].name')"; then
     readarray -t old_assets <<<"${out}"
@@ -42,8 +42,8 @@ if [[ "${channel}" = 'nightly' ]]; then
     # Tag the nightly.
     run git config user.name 'Github Actions'
     run git config user.email '<>'
-    run git tag -m '' -f nightly
-    run git push -f origin refs/tags/nightly
+    run git tag -m '' -f "${target}"
+    run git push -f origin "refs/tags/${target}"
 fi
 
 # Sort & label assets.
