@@ -21,7 +21,7 @@ jobs:
     steps:
       - name: Check freshness
         id: check
-        run: ./.ci/freshness.sh >>"${GITHUB_OUTPUT}"
+        run: ./.ci/nightly_freshness_check.sh >>"${GITHUB_OUTPUT}"
     outputs:
       emulator: ${{ steps.check.outputs.fresh }}
   

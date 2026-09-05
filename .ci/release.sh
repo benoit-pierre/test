@@ -8,7 +8,7 @@ source "${CI_DIR}/common.sh"
 assets_dir="$1"
 shift
 
-if tag_name="$(git describe --tag --exact-match --match='v[0-9]*')"; then
+if tag_name="$(git describe --tag --exact-match --match='v[0-9]*' 2>/dev/null)"; then
     channel='stable'
     draft=1
     prerelease=
