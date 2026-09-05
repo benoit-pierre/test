@@ -6,6 +6,11 @@ permissions:
 on:
   release:
     types: [released]
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        required: true
+        type: string
 
 defaults:
   run:
@@ -34,4 +39,4 @@ jobs:
         env:
           GH_REPO: ${{ inputs.gh_repo }}
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
-        run: ./.ci/stable.sh assets '${{ github.event.release.tag_name }}'
+        run: ./.ci/stable.sh assets '${{ inputs.tag_name || github.event.release.tag_name }}'
