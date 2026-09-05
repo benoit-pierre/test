@@ -13,13 +13,13 @@ if tag_name="$(git describe --tag --exact-match --match='v[0-9]*')"; then
     channel='stable'
     draft=1
     prerelease=
-    target="${tag_name}"
+    title="${tag_name}"
 else
+    tag_name='nightly'
     channel='nightly'
     draft=
     prerelease=1
-    target='nightly'
-    tag_name='OTA'
+    title='OTA'
 fi
 
 if out="$(gh release view "${tag_name}" --json 'assets' | jq -r '.assets[].name')"; then
@@ -32,9 +32,9 @@ fi
 
 echo -e "${ANSI_BLUE}mode      : ${mode}${ANSI_RESET}"
 echo -e "${ANSI_BLUE}tag_name  : ${tag_name}${ANSI_RESET}"
-echo -e "${ANSI_BLUE}target    : ${target}${ANSI_RESET}"
 echo -e "${ANSI_BLUE}draft     : ${draft:-0}${ANSI_RESET}"
 echo -e "${ANSI_BLUE}prerelease: ${prerelease:-0}${ANSI_RESET}"
+echo -e "${ANSI_BLUE}title     : ${title}${ANSI_RESET}"
 
 if [[ "${channel}" = 'nightly' ]]; then
     # Generate OTA assets.
@@ -42,8 +42,8 @@ if [[ "${channel}" = 'nightly' ]]; then
     # Tag the nightly.
     run git config user.name 'Github Actions'
     run git config user.email '<>'
-    run git tag -m '' -f "${target}"
-    run git push -f origin "refs/tags/${target}"
+    run git tag -m '' -f "${tag_name}"
+    run git push -f origin "refs/tags/${tag_name}"
 fi
 
 # Sort & label assets.
@@ -51,9 +51,9 @@ out="$("${CI_DIR}/assets_sort_and_label.sh" "${assets_dir}"/*)"
 readarray -t assets <<<"${out}"
 
 # Create / update release.
-cmd=(gh release "${mode}" --target="${target}")
+cmd=(gh release "${mode}" --target="${tag_name}")
 if [[ "${mode}" = 'create' ]]; then
-    cmd+=(${draft:+--draft} ${prerelease:+--prerelease} --title="${tag_name}" --note='.')
+    cmd+=(${draft:+--draft} ${prerelease:+--prerelease} --title="${title}" --note='.')
 fi
 cmd+=("${tag_name}")
 run "${cmd[@]}"
