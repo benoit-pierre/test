@@ -126,7 +126,7 @@ jobs:
 
       # # }}}
 
-      # # Checkout / fetch. {{{
+      # Checkout / fetch. {{{
 
       - name: Checkout
         uses: actions/checkout@v7
@@ -140,7 +140,7 @@ jobs:
       # - name: Fetch
       #   run: make fetchthirdparty
 
-      # # }}}
+      # }}}
 
       # - name: Generate cache key
       #   run: make TARGET= cache-key
@@ -299,13 +299,13 @@ jobs:
       #     cache-read-only: false
       #     gradle-version: wrapper
 
-      - name: Generate artifacts
-        if: matrix.artifact
-        # env:
-        #   ANDROID_ASSETS_COMPRESSION: '-m0=flzma2 -mx=9'
-        # # Note: ensure the build skeleton is created, so there are no dangling
-        # # symlinks (e.g. `data/dict`) to trip 7zip during artifact generation…
-        run: echo make --assume-old=all skeleton ${{ inputs.all_artifacts && 'update' || format('update-{0}', matrix.artifact) }}
+      # - name: Generate artifacts
+      #   if: matrix.artifact
+      #   env:
+      #     ANDROID_ASSETS_COMPRESSION: '-m0=flzma2 -mx=9'
+      #   # Note: ensure the build skeleton is created, so there are no dangling
+      #   # symlinks (e.g. `data/dict`) to trip 7zip during artifact generation…
+      #   run: make --assume-old=all skeleton ${{ inputs.all_artifacts && 'update' || format('update-{0}', matrix.artifact) }}
 
       # - name: Sign artifacts (Android)
       #   if: matrix.artifact && startsWith(matrix.target, 'android-')
@@ -350,7 +350,7 @@ jobs:
             esac
           done
 
-      # # }}}
+      # }}}
 
       # Upload artifacts. {{{
 

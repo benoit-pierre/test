@@ -4,24 +4,23 @@ CI_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=/dev/null
 source "${CI_DIR}/common.sh"
 
-[[ $# -eq 2 ]] || "2 argument expected, got $#"
+[[ $# -eq 1 ]] || "1 argument expected, got $#"
 assets_dir="$1"
-release_checkout="$2"
-shift 2
+shift
 
 # We can't rely on `$GITHUB_REF` since we may be called from the nightly workflow.
-if tag="$(git -C "${release_checkout}" describe --tag --exact-match --match='v[0-9]*')"; then
+if tag="$(git describe --tag --exact-match --match='v[0-9]*')"; then
     channel='stable'
     draft=1
     prerelease=
 else
     channel='nightly'
-    tag='ota'
     draft=
     prerelease=1
+    tag='nightly'
 fi
 
-target="$(git -C "${release_checkout}" rev-parse HEAD)"
+target="$(git rev-parse HEAD)"
 
 if out="$(gh release view "${tag}" --json 'assets' | jq -r '.assets[].name')"; then
     readarray -t old_assets <<<"${out}"
@@ -37,21 +36,19 @@ echo -e "${ANSI_BLUE}target    : ${target}${ANSI_RESET}"
 echo -e "${ANSI_BLUE}draft     : ${draft:-0}${ANSI_RESET}"
 echo -e "${ANSI_BLUE}prerelease: ${prerelease:-0}${ANSI_RESET}"
 
-if [[ "${tag}" = 'ota' ]]; then
+if [[ "${tag}" = 'nightly' ]]; then
+    # Run the OTA pass.
     "${CI_DIR}/ota.sh" "${assets_dir}" "${channel}"
+    # Tag the nightly.
+    run git config user.name 'Github Actions'
+    run git config user.email '<>'
+    run git tag -m '' -f "${tag}"
+    run git push -f origin "refs/tags/${tag}"
 fi
 
 # Sort & label assets.
 out="$("${CI_DIR}/assets_sort_and_label.sh" "${assets_dir}"/*)"
 readarray -t assets <<<"${out}"
-
-# Setup git author.
-run git -C "${release_checkout}" config user.name 'Github Actions'
-run git -C "${release_checkout}" config user.email '<>'
-
-# Update release repo tag.
-run git -C "${release_checkout}" tag -m '' -f "${tag}"
-run git -C "${release_checkout}" push -f origin "refs/tags/${tag}"
 
 # Create / update release.
 cmd=(gh release "${mode}" --target="${target}")

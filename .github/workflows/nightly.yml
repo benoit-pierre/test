@@ -25,14 +25,25 @@ jobs:
   release:
     name: Release
     needs: build
-    if: |
-      !cancelled() &&
-      contains('success', needs.build.result)
-    uses: ./.github/workflows/_release.yml
-    secrets:
-      # Yep, this is required to allow using the `release` environment
-      # secret of the same name in the called workflow… Pretty evident,
-      # right? ¯\_(ツ)_/¯
-      GH_TOKEN: ${{ secrets.GH_TOKEN }}
-    with:
-      gh_repo: ${{ vars.RELEASE_GH_REPO || github.repository }}
+    environment: release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          clean: false
+          fetch-tags: true
+          ref: ${{ github.sha }}
+          show-progress: false
+          sparse-checkout: .ci
+          token: ${{ secrets.GH_TOKEN }}
+      - name: Download artifacts
+        uses: actions/download-artifact@v8
+        with:
+          merge-multiple: true
+          path: assets
+          skip-decompress: true
+      - name: Release
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: ./.ci/release.sh assets
