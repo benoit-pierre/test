@@ -39,14 +39,22 @@ def asset_parse:
     # koreader-kindlepw2-latest-stable.zsync
     // (
       capture("/koreader-" + $platform_rx + "-latest-(?<version>[a-z]+)" + $extension_rx)
-      | .base_version = "-666"
+      | .base_version = .version
+      | .short_version = .version
+      | .sort_version = [666]
     )
     // error("unsupported asset: " + .)
-  ) # | debug |
+  ) #| debug
   # Finalize.
-  | .commit_number = (.commit_number // "0" | tonumber)
   | .file = $file
   | .platform_name = ($platform_name[.platform] // error("invalid platform: " + .platform))
+  | .short_version = .short_version // .base_version
+  | .sort_version = .sort_version // [
+    (.base_version | split(".") | map(tonumber | -.)),
+    .commit_number // 0 | tonumber,
+    .platform,
+    .extension
+  ] #| debug
 ;
 
 # vim: sw=2
