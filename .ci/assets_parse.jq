@@ -23,24 +23,25 @@ def asset_parse:
     # koreader-linux-x86_64-v2023.06.1.tar.xz
     # koreader-ubuntu-touch-arm-v2015.11-640-g17e9a8e_2018-03-09.targz
     # koreader-android-arm-v2015.11-654-gb7392f7_2018-03-09.apk
-    capture("/koreader-" + $platform_rx + "-" + $version_rx + $extension_rx)
+    capture("/?koreader-" + $platform_rx + "-" + $version_rx + $extension_rx)
     # koreader-v2023.06.1-x86_64.AppImage
     # koreader-v2025.10-197-g7c5ee9c1a2_2026-03-13-x86_64.AppImage
     // (
-         capture("/koreader-" + $version_rx + "-" + $platform_rx + $extension_rx)
+         capture("/?koreader-" + $version_rx + "-" + $platform_rx + $extension_rx)
          | .platform = "linux-" + .platform
     )
     # koreader_v2026.09-8-g84cf973-1_amd64.deb
     // (
-         capture("/koreader_" + $version_rx + "-1_" + $platform_rx + $extension_rx)
+         capture("/?koreader_" + $version_rx + "-1_" + $platform_rx + $extension_rx)
          | .platform = "linux-" + .platform
     )
     # koreader-kindlepw2-latest-nightly.kotasync
     # koreader-kindlepw2-latest-stable.zsync
     // (
-      capture("/koreader-" + $platform_rx + "-latest-(?<version>[a-z]+)" + $extension_rx)
+      capture("/?koreader-" + $platform_rx + "-latest-(?<version>nightly|stable)" + $extension_rx)
       | .base_version = .version
       | .sort_version = [666]
+      | .latest_ota = true
     )
     // error("unsupported asset: " + .)
   ) #| debug
