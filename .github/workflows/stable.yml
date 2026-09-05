@@ -5,7 +5,7 @@ permissions:
 
 on:
   release:
-    types: [published]
+    types: [published, released]
 
 defaults:
   run:
@@ -21,6 +21,8 @@ jobs:
 
     steps:
 
+      - run: jq --color-output . <<<'${{ toJSON(github.event) }}'
+
       - name: Checkout
         uses: actions/checkout@v7
         with:
@@ -32,5 +34,4 @@ jobs:
         env:
           GH_REPO: ${{ inputs.gh_repo }}
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
-        run: jq --color-output . <<<'${{ toJSON(github.event) }}'
-        # run: ./.ci/stable.sh
+        run: echo ./.ci/stable.sh
