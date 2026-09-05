@@ -31,12 +31,14 @@ else
     mode='create'
 fi
 
-echo -e "${ANSI_BLUE}mode      : ${mode}${ANSI_RESET}"
-echo -e "${ANSI_BLUE}tag_name  : ${tag_name}${ANSI_RESET}"
-echo -e "${ANSI_BLUE}draft     : ${draft:-0}${ANSI_RESET}"
-echo -e "${ANSI_BLUE}prerelease: ${prerelease:-0}${ANSI_RESET}"
-echo -e "${ANSI_BLUE}title     : ${title}${ANSI_RESET}"
-echo -e "${ANSI_BLUE}target    : ${target}${ANSI_RESET}"
+{
+    echo -e "${ANSI_BLUE}mode      : ${mode}${ANSI_RESET}"
+    echo -e "${ANSI_BLUE}tag_name  : ${tag_name}${ANSI_RESET}"
+    echo -e "${ANSI_BLUE}draft     : ${draft:-0}${ANSI_RESET}"
+    echo -e "${ANSI_BLUE}prerelease: ${prerelease:-0}${ANSI_RESET}"
+    echo -e "${ANSI_BLUE}title     : ${title}${ANSI_RESET}"
+    echo -e "${ANSI_BLUE}target    : ${target}${ANSI_RESET}"
+} 1>&2
 
 if [[ "${channel}" = 'nightly' ]]; then
     # Generate OTA assets.

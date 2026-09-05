@@ -14,9 +14,11 @@ if [[ "${new_target}" = "${old_target}" ]]; then
     stale=
 fi
 
-echo -e "${ANSI_BLUE}tag_name  : ${tag_name}${ANSI_RESET}"
-echo -e "${ANSI_BLUE}old_target: ${old_target}${ANSI_RESET}"
-echo -e "${ANSI_BLUE}new_target: ${new_target}${ANSI_RESET}"
-echo -e "${ANSI_BLUE}stale     : ${stale}${ANSI_RESET}"
+{
+    echo -e "${ANSI_BLUE}tag_name  : ${tag_name}${ANSI_RESET}"
+    echo -e "${ANSI_BLUE}old_target: ${old_target}${ANSI_RESET}"
+    echo -e "${ANSI_BLUE}new_target: ${new_target}${ANSI_RESET}"
+    echo -e "${ANSI_BLUE}stale     : ${stale}${ANSI_RESET}"
+} 1>&2
 
 echo "stale=${stale}"
