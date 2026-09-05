@@ -41,7 +41,7 @@ kotasync_make() {
 zsync_make() {
     tgz="$1"
     shift 1
-    cmd=(zsyncmake "new/${tgz}" -C -u "${tgz}" -o "new/${tgz%.targz}.zsync")
+    cmd=(zsyncmake "${tgz}" -C -u "${tgz}" -o "${tgz%.targz}.zsync")
     container_exec "${cmd[@]}"
 }
 
