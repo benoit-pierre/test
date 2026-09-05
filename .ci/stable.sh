@@ -10,10 +10,10 @@ release_tag="$2"
 shift 1
 
 # Download release assets.
-run gh release download --directory=assets "${release_tag}"
+run gh release download --dir="${assets_dir}" "${release_tag}"
 
 # Run the OTA pass.
-"${CI_DIR}/ota.sh" assets stable
+"${CI_DIR}/ota.sh" "${assets_dir}" stable
 
 # Sort & label assets.
 out="$("${CI_DIR}/assets_sort_and_label.sh" "${assets_dir}"/*)"

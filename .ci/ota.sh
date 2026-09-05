@@ -47,7 +47,7 @@ zsync_make() {
 
 # Fetch latest nightly kotasync files.
 if out="$(gh release view --json assets --jq '.assets[].name | select(test("^koreader-.*-latest-nightly\\.kotasync$"))' ota)" && [[ -n "${out}" ]]; then
-    run gh release download --directory="${assets_dir}/nightly" --pattern='koreader-*-latest-nightly.kotasync' ota
+    run gh release download --dir="${assets_dir}/nightly" --pattern='koreader-*-latest-nightly.kotasync' ota
     trap 'run rm -rf "${assets_dir}/nightly"' EXIT
 fi
 
