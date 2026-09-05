@@ -24,7 +24,7 @@ fi
 
 target="$(git rev-parse HEAD)"
 
-if out="$(gh release view "${tag_name}" --json 'assets' | jq -r '.assets[].name')"; then
+if out="$(gh release view "${tag_name}" --json 'assets' --template '{{ range .assets }}{{ .name }}{{ "\n" }}{{ end }}')"; then
     readarray -t old_assets <<<"${out}"
     mode='edit'
 else
