@@ -50,8 +50,8 @@ if [[ "${channel}" = 'nightly' ]]; then
     run git push -f origin "refs/tags/${tag_name}"
 fi
 
-# Sort & label assets.
-out="$("${CI_DIR}/assets_sort_and_label.sh" "${assets_dir}"/*)"
+# Label assets.
+out="$("${CI_DIR}/assets_label.sh" "${assets_dir}"/*)"
 readarray -t assets <<<"${out}"
 
 # Create / update release.
