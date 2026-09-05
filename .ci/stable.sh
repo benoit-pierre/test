@@ -6,7 +6,7 @@ source "${CI_DIR}/common.sh"
 
 [[ $# -eq 2 ]] || "2 arguments expected, got $#"
 assets_dir="$1"
-release_tag="$1"
+release_tag="$2"
 shift 1
 
 # Download release assets.
