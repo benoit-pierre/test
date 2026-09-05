@@ -14,9 +14,21 @@ defaults:
     shell: bash
 
 jobs:
+
+  check:
+    name: Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check freshness
+        id: check
+        run: ./.ci/freshness.sh >>"${GITHUB_OUTPUT}"
+    outputs:
+      emulator: ${{ steps.check.outputs.fresh }}
   
   build:
     name: Build
+    needs: check
+    if: needs.check.outputs.fresh
     uses: ./.github/workflows/_build.yml
     with:
       jobs: release
