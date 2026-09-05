@@ -19,16 +19,23 @@ jobs:
     name: Check
     runs-on: ubuntu-latest
     steps:
-      - name: Check freshness
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          clean: false
+          fetch-tags: true
+          show-progress: false
+          sparse-checkout: .ci
+      - name: Check staleness
         id: check
-        run: ./.ci/nightly_freshness_check.sh >>"${GITHUB_OUTPUT}"
+        run: ./.ci/nightly_staleness_check.sh >>"${GITHUB_OUTPUT}"
     outputs:
-      emulator: ${{ steps.check.outputs.fresh }}
+      stale: ${{ steps.check.outputs.stale }}
   
   build:
     name: Build
     needs: check
-    if: needs.check.outputs.fresh
+    if: needs.check.outputs.stale
     uses: ./.github/workflows/_build.yml
     with:
       jobs: release
@@ -45,7 +52,6 @@ jobs:
         with:
           clean: false
           fetch-tags: true
-          ref: ${{ github.sha }}
           show-progress: false
           sparse-checkout: .ci
           token: ${{ secrets.GH_TOKEN }}
