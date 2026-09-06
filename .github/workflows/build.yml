@@ -80,7 +80,7 @@ jobs:
     uses: ./.github/workflows/build.matrix.yml
     with:
       jobs: ${{ matrix.jobs }}
-      fail_fast: ${{ inputs.fail_fast }}
+      fail_fast: true #${{ inputs.fail_fast }}
       all_artifacts: ${{ inputs.all_artifacts }}
       test: ${{ inputs.test }}
 
