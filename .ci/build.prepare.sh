@@ -23,7 +23,7 @@ jobs="$(jq --compact-output --from-file "${jq_script}" --args "$@" <<<"${json}")
     jq --color-output --sort-keys '
 {
     "emulator": .emulator | fromjson,
-    "platform": if .platform == "" then "" else .platform | map(.jobs = (.jobs | fromjson)) end
+    "platform": .platform // (.platform | map(.jobs = (.jobs | fromjson)))
 }' <<<"${jobs}"
 } 1>&2
 # Output
