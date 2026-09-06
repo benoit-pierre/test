@@ -122,6 +122,20 @@ jobs:
       all_artifacts: ${{ inputs.all_artifacts }}
       test: ${{ inputs.test }}
 
+  linux:
+    needs: [prepare, emulator]
+    if: |
+      !cancelled() &&
+      fromJSON(needs.prepare.outputs.jobs).linux != '[]' &&
+      contains('skipped success', needs.emulator.result)
+    name: Linux
+    uses: ./.github/workflows/build.matrix.yml
+    with:
+      jobs: ${{ fromJSON(needs.prepare.outputs.jobs).linux }}
+      fail_fast: ${{ inputs.fail_fast }}
+      all_artifacts: ${{ inputs.all_artifacts }}
+      test: ${{ inputs.test }}
+
   macos:
     needs: [prepare, emulator]
     if: |

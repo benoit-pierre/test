@@ -91,33 +91,6 @@ android: # {{{
 
 # }}}
 
-linux: # {{{
-
-  - &LINUX
-    id: linux-aarch64
-    job: Linux AArch64
-    runs-on: ubuntu-24.04-arm
-    image: koreader/koappimage:3.0.0-22.04
-    target: linux
-    makeflags: PARALLEL_JOBS=5 MONOLIBTIC=1
-    cache_size: 415M
-    test: true
-    artifact: appimage
-
-  # FIXME: does not work, no support for using a docker image with
-  # the `--platform=…` docker argument (see `build.matrix.yml`)…
-  # - <<: *LINUX
-  #   id: linux-armhf
-  #   job: Linux ARMhf
-  #   platform: aarch64
-
-  - <<: *LINUX
-    id: linux-x86_64
-    job: Linux x86_64
-    runs-on:
-
-# }}}
-
 cervantes: # {{{
 
   - id: cervantes
@@ -164,6 +137,33 @@ kobo: # {{{
   - <<: *KOBO
     id: kobov5
     job: Kobo v5
+
+# }}}
+
+linux: # {{{
+
+  - &LINUX
+    id: linux-aarch64
+    job: Linux AArch64
+    runs-on: ubuntu-24.04-arm
+    image: koreader/koappimage:3.0.0-22.04
+    target: linux
+    makeflags: PARALLEL_JOBS=5 MONOLIBTIC=1
+    cache_size: 415M
+    test: true
+    artifact: appimage
+
+  # FIXME: does not work, no support for using a docker image with
+  # the `--platform=…` docker argument (see `build.matrix.yml`)…
+  # - <<: *LINUX
+  #   id: linux-armhf
+  #   job: Linux ARMhf
+  #   platform: aarch64
+
+  - <<: *LINUX
+    id: linux-x86_64
+    job: Linux x86_64
+    runs-on:
 
 # }}}
 
