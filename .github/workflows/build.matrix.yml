@@ -27,9 +27,9 @@ defaults:
 
 jobs:
 
-  Build:
+  build:
 
-    if: inputs.jobs != ''
+    if: false #inputs.jobs != ''
 
     strategy:
       fail-fast: ${{ inputs.fail_fast }}
