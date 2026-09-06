@@ -29,7 +29,8 @@ jobs:
 
   build:
 
-    if: 'test' != '' && false
+    if: |
+      'test' != '' && false
 
     strategy:
       fail-fast: ${{ inputs.fail_fast }}
