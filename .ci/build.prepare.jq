@@ -20,14 +20,18 @@ def match(filters):
 ) | . as $s2 | $s2 #| debug
 # And filter-out matching jobs…
 | $s2.jobs | to_entries #| debug
-| map(.value = [
-  .value.[]
-  | select(.id | match($s2.filters))
-  # …updating optional fields.
-  | .cache=(.cache // .id)
-  | .target=(.target // .id)
-  | .check_ffi_cdecls=(.check_ffi_cdecls // true)
-]) #| debug
+| map(.value = (
+  [
+    .value.[]
+    | select(.id | match($s2.filters))
+    # …updating optional fields.
+    | .cache=(.cache // .id)
+    | .target=(.target // .id)
+    | .check_ffi_cdecls=(.check_ffi_cdecls // true)
+  ]
+  # NOTE: we replace an empty job array by an empty string.
+  | if . == [] then "" else . end
+)) #| debug
 | from_entries
 
 # vim: sw=2

@@ -60,7 +60,7 @@ jobs:
     needs: prepare
     if: |
       !cancelled() &&
-      fromJSON(needs.prepare.outputs.jobs).Emulator != []
+      fromJSON(needs.prepare.outputs.jobs).Emulator
     uses: ./.github/workflows/build.matrix.yml
     with:
       jobs: ${{ toJSON(fromJSON(needs.prepare.outputs.jobs).Emulator) }}
