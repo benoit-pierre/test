@@ -50,35 +50,29 @@ jobs:
         run: |
           set -o noglob
           ./.ci/build.prepare.sh ${{ inputs.jobs }} >>"${GITHUB_OUTPUT}"
-      - run: "echo '${{ toJSON('[]') }}'"
-      - run: "echo '${{ toJSON('[]') != '[]' && 'yes' || 'no' }}'"
-      - run: "echo '${{ toJSON('[]') == '[]' && 'yes' || 'no' }}'"
     outputs:
       jobs: ${{ steps.generate.outputs.jobs }}
 
-  # emulator:
-  #   needs: prepare
-  #   if: |
-  #     !cancelled() &&
-  #     fromJSON(needs.prepare.outputs.jobs).emulator != '[]'
-  #   name: Emulator
-  #   uses: ./.github/workflows/build.matrix.yml
-  #   with:
-  #     jobs: ${{ toJSON(fromJSON(needs.prepare.outputs.jobs).emulator) }}
-  #     fail_fast: ${{ inputs.fail_fast || true }}
-  #     all_artifacts: ${{ inputs.all_artifacts }}
-  #     test: ${{ inputs.test }}
+  emulator:
+    needs: prepare
+    if: |
+      !cancelled() &&
+      fromJSON(needs.prepare.outputs.jobs).emulator
+    name: Emulator
+    uses: ./.github/workflows/build.matrix.yml
+    with:
+      jobs: ${{ toJSON(fromJSON(needs.prepare.outputs.jobs).emulator) }}
+      fail_fast: ${{ inputs.fail_fast || true }}
+      all_artifacts: ${{ inputs.all_artifacts }}
+      test: ${{ inputs.test }}
 
   platform:
     needs: [prepare]
-    # needs: [prepare, emulator]
+    needs: [prepare, emulator]
     if: |
       !cancelled() &&
-      fromJSON(needs.prepare.outputs.jobs).platform != '[]'
-    # if: |
-    #   !cancelled() &&
-    #   fromJSON(needs.prepare.outputs.jobs).platform
-    #   contains('skipped success', needs.emulator.result)
+      fromJSON(needs.prepare.outputs.jobs).platform
+      contains('skipped success', needs.emulator.result)
     strategy:
       fail-fast: ${{ inputs.fail_fast }}
       matrix:
