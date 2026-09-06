@@ -33,7 +33,7 @@ jobs:
 
     strategy:
       fail-fast: ${{ inputs.fail_fast }}
-      matrix: ${{ fromJSON(inputs.jobs != '' && format('{{"include":{0}}}', inputs.jobs) || '{}') }}
+      # matrix: ${{ fromJSON(inputs.jobs != '' && format('{{"include":{0}}}', inputs.jobs) || '{}') }}
         # # include: ${{ fromJSON(inputs.jobs != '' && inputs.jobs || '[]') }}
         # include: ${{ fromJSON('[]') }}
 
