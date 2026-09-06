@@ -30,11 +30,11 @@ def match(filters):
     | .check_ffi_cdecls=(.check_ffi_cdecls // true)
   ]
 )) #| debug
-| map({ "id": .key, "jobs": .value })
+| map({ "group": .key, "jobs": .value })
 # Split emulator & platform sets.
 | {
-  "emulator": (.[] | select(.id == "Emulator") | .jobs | tojson),
-  "platform": [.[] | select(.id != "Emulator" and .jobs != [])] | tojson
+  "emulator": (.[] | select(.group == "Emulator") | .jobs | tojson),
+  "platform": [.[] | select(.group != "Emulator" and .jobs != []) | .jobs = (.jobs | tojson) ] | tojson
 }
 
 # vim: sw=2

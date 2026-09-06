@@ -50,6 +50,7 @@ jobs:
         run: |
           set -o noglob
           ./.ci/build.prepare.sh ${{ inputs.jobs }} >>"${GITHUB_OUTPUT}"
+      - run: "echo ${{ [] == [] && 'yes' || 'no' }}"
     outputs:
       jobs: ${{ steps.generate.outputs.jobs }}
 
@@ -79,8 +80,8 @@ jobs:
     strategy:
       fail-fast: ${{ inputs.fail_fast }}
       matrix:
-        include: ${{ fromJSON(needs.prepare.outputs.jobs).platform }}
-    name: ${{ matrix.id }}
+        include: ${{ fromJSON(fromJSON(needs.prepare.outputs.jobs).platform) }}
+    name: ${{ matrix.group }}
     uses: ./.github/workflows/build.matrix.yml
     with:
       jobs: ${{ matrix.jobs }}
