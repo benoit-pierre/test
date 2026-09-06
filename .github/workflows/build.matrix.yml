@@ -30,7 +30,7 @@ jobs:
   build:
 
     if: |
-      'test' != '' && false
+      inputs.jobs != '' && true || false
 
     strategy:
       fail-fast: ${{ inputs.fail_fast }}
