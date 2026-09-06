@@ -68,6 +68,27 @@ jobs:
       all_artifacts: ${{ inputs.all_artifacts }}
       test: ${{ inputs.test }}
 
+  others:
+
+    matrix:
+      include:
+        - name: macOS
+          jobs: ${{ toJSON(fromJSON(needs.prepare.outputs.jobs).macOS) }}
+      fail_fast: ${{ inputs.fail_fast }}
+
+    name: ${{ matrix.name }}
+    needs: [prepare, emulator]
+    if: |
+      !cancelled() &&
+      matrix.jobs &&
+      contains('skipped success', needs.emulator.result)
+    uses: ./.github/workflows/build.matrix.yml
+    with:
+      jobs: ${{ matrix.jobs }}
+      fail_fast: ${{ inputs.fail_fast }}
+      all_artifacts: ${{ inputs.all_artifacts }}
+      test: ${{ inputs.test }}
+
   # macos:
   #   name: macOS
   #   needs: [prepare, emulator]
