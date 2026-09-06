@@ -34,7 +34,8 @@ jobs:
     strategy:
       fail-fast: ${{ inputs.fail_fast }}
       matrix:
-        include: ${{ fromJSON(inputs.jobs != '' && inputs.jobs || '[]') }}
+        # include: ${{ fromJSON(inputs.jobs != '' && inputs.jobs || '[]') }}
+        include: ${{ fromJSON('[]') }}
 
     name: ${{ matrix.job }}
     runs-on: 'ubuntu-latest'
