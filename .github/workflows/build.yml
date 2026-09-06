@@ -66,7 +66,7 @@ jobs:
   #     all_artifacts: ${{ inputs.all_artifacts }}
   #     test: ${{ inputs.test }}
 
-  kindle: ${{ fromJSON(steps.generate.outputs.jobs).kindle }}
+  kindle: ${{ fromJSON(needs.prepare.outputs.jobs).kindle }}
 
   # kindle:
   #   needs: [prepare, emulator]
