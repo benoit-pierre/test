@@ -79,7 +79,7 @@ jobs:
     strategy:
       fail-fast: ${{ inputs.fail_fast }}
       matrix:
-        include: ${{ toJSON(fromJSON(needs.prepare.outputs.jobs).platform) }}
+        include: ${{ fromJSON(needs.prepare.outputs.jobs).platform }}
     name: ${{ matrix.id }}
     uses: ./.github/workflows/build.matrix.yml
     with:
