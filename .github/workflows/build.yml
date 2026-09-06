@@ -71,7 +71,12 @@ jobs:
     if: ${{ fromJSON(needs.prepare.outputs.jobs).kindle.if }}
     name: Kindle
     uses: ./.github/workflows/build.matrix.yml
-    with: ${{ fromJSON(needs.prepare.outputs.jobs).kindle.with }}
+    # with: ${{ fromJSON(needs.prepare.outputs.jobs).kindle.with }}
+    with:
+      jobs: ${{ fromJSON(needs.prepare.outputs.jobs).kindle.with.jobs }}
+      fail_fast: ${{ inputs.fail_fast }}
+      all_artifacts: ${{ inputs.all_artifacts }}
+      test: ${{ inputs.test }}
 
   # kindle:
   #   needs: [prepare, emulator]
