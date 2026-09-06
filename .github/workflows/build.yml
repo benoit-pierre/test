@@ -57,7 +57,7 @@ jobs:
   #   needs: prepare
   #   if: |
   #     !cancelled() &&
-  #     fromJSON(needs.prepare.outputs.jobs).emulator
+  #     fromJSON(needs.prepare.outputs.jobs).emulator != '[]'
   #   name: Emulator
   #   uses: ./.github/workflows/build.matrix.yml
   #   with:
@@ -71,7 +71,7 @@ jobs:
     # needs: [prepare, emulator]
     if: |
       !cancelled() &&
-      fromJSON(needs.prepare.outputs.jobs).platform
+      fromJSON(needs.prepare.outputs.jobs).platform != '[]'
     # if: |
     #   !cancelled() &&
     #   fromJSON(needs.prepare.outputs.jobs).platform

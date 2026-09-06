@@ -29,20 +29,13 @@ def match(filters):
     | .target=(.target // .id)
     | .check_ffi_cdecls=(.check_ffi_cdecls // true)
   ]
-  # NOTE: we replace an empty job array by an empty string.
-  | if . == [] then "" else . end
 )) #| debug
 | map({ "id": .key, "jobs": .value })
 # Split emulator & platform sets.
 | {
   "emulator": (.[] | select(.id == "Emulator") | .jobs | tojson),
-  "platform": (
-    [.[] | select(.id != "Emulator" and .jobs != "") | .jobs = (.jobs | tojson)]
-    # Here too replace an empty array by an empty string.
-    | if . == [] then "" else . end
-  )
+  "platform": [.[] | select(.id != "Emulator" and .jobs != [])] | tojson
 }
-# | from_entries
 
 # vim: sw=2
 

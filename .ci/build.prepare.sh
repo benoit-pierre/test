@@ -4,7 +4,7 @@ CI_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=/dev/null
 source "${CI_DIR}/common.sh"
 
-[[ $# -ge 0 ]] || "at least one argument expected, got $#"
+[[ $# -ge 1 ]] || "at least one argument expected, got $#"
 
 jobs_file="${0%/*}/build.jobs.yml"
 jq_script="${0%/*}/build.prepare.jq"
@@ -17,14 +17,12 @@ fi
 json="$("${yq[@]}" --output-format=json . "${jobs_file}")"
 
 jobs="$(jq --compact-output --from-file "${jq_script}" --args "$@" <<<"${json}")"
-# Prettry print with jobs expanded.
 {
     printf 'jobs: '
-    jq --color-output --sort-keys '
-{
-    "emulator": .emulator | fromjson,
-    "platform": .platform // (.platform | map(.jobs = (.jobs | fromjson)))
-}' <<<"${jobs}"
+    jq --color-output --sort-keys <<<"${jobs}"
+    # Prettry print with jobs expanded.
+    printf 'jobs (expanded): '
+    jq --color-output --sort-keys 'to_entries | map(.value = (.value | fromjson)) | from_entries' <<<"${jobs}"
 } 1>&2
 # Output
 printf '%s=%s\n' 'jobs' "${jobs}"
