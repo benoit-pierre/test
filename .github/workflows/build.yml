@@ -81,7 +81,6 @@ jobs:
     needs: [prepare, emulator]
     if: |
       !cancelled() &&
-      matrix.jobs &&
       contains('skipped success', needs.emulator.result)
     uses: ./.github/workflows/build.matrix.yml
     with:
