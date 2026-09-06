@@ -70,7 +70,7 @@ jobs:
     needs: [prepare, emulator]
     if: |
       !cancelled() &&
-      fromJSON(needs.prepare.outputs.jobs).platform
+      fromJSON(needs.prepare.outputs.jobs).platform &&
       contains('skipped success', needs.emulator.result)
     strategy:
       fail-fast: ${{ inputs.fail_fast }}
