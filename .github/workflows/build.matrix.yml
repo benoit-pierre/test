@@ -31,14 +31,12 @@ jobs:
 
     strategy:
       fail-fast: ${{ inputs.fail_fast }}
-      matrix: ${{ fromJSON(inputs.jobs)) }}
+      matrix: ${{ fromJSON(inputs.jobs) }}
 
     name: ${{ matrix.job }}
     runs-on: 'ubuntu-latest'
 
     steps:
-
-      - run: "jq <<<'${{ fromJSON(inputs.jobs) }}'"
 
       # Checkout / fetch. {{{
 
