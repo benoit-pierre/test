@@ -31,7 +31,8 @@ jobs:
 
     strategy:
       fail-fast: ${{ inputs.fail_fast }}
-      matrix: ${{ fromJSON(inputs.jobs) }}
+      matrix:
+        include: ${{ fromJSON(inputs.jobs) }}
 
     name: ${{ matrix.job }}
     runs-on: 'ubuntu-latest'
