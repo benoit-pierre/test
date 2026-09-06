@@ -49,107 +49,119 @@ jobs:
         id: generate
         run: |
           set -o noglob
-          ./.ci/build.prepare.sh ${{ inputs.fail_fast }} ${{ inputs.all_artifacts }} ${{ inputs.test }} ${{ inputs.jobs }} >>"${GITHUB_OUTPUT}"
+          ./.ci/build.prepare.sh ${{ inputs.jobs }} >>"${GITHUB_OUTPUT}"
     outputs:
       jobs: ${{ steps.generate.outputs.jobs }}
 
-  # emulator:
-  #   needs: prepare
-  #   if: |
-  #     !cancelled() &&
-  #     fromJSON(needs.prepare.outputs.jobs).emulator != '[]'
-  #   name: Emulator
-  #   uses: ./.github/workflows/build.matrix.yml
-  #   with:
-  #     jobs: ${{ fromJSON(needs.prepare.outputs.jobs).emulator }}
-  #     fail_fast: ${{ inputs.fail_fast || true }}
-  #     all_artifacts: ${{ inputs.all_artifacts }}
-  #     test: ${{ inputs.test }}
-
-  kindle:
+  emulator:
     needs: prepare
-    if: ${{ fromJSON(needs.prepare.outputs.jobs).kindle.if }}
-    name: Kindle
+    if: |
+      !cancelled() &&
+      fromJSON(needs.prepare.outputs.jobs).emulator != '[]'
+    name: Emulator
     uses: ./.github/workflows/build.matrix.yml
-    # with: ${{ fromJSON(needs.prepare.outputs.jobs).kindle.with }}
     with:
-      jobs: ${{ fromJSON(needs.prepare.outputs.jobs).kindle.with.jobs }}
+      jobs: ${{ fromJSON(needs.prepare.outputs.jobs).emulator }}
+      fail_fast: ${{ inputs.fail_fast || true }}
+      all_artifacts: ${{ inputs.all_artifacts }}
+      test: ${{ inputs.test }}
+
+  android:
+    needs: [prepare, emulator]
+    if: |
+      !cancelled() &&
+      fromJSON(needs.prepare.outputs.jobs).android != '[]' &&
+      contains('skipped success', needs.emulator.result)
+    name: Android
+    uses: ./.github/workflows/build.matrix.yml
+    with:
+      jobs: ${{ fromJSON(needs.prepare.outputs.jobs).android }}
       fail_fast: ${{ inputs.fail_fast }}
       all_artifacts: ${{ inputs.all_artifacts }}
       test: ${{ inputs.test }}
 
-  # kindle:
-  #   needs: [prepare, emulator]
-  #   if: |
-  #     !cancelled() &&
-  #     fromJSON(needs.prepare.outputs.jobs).kindle != '[]' &&
-  #     contains('skipped success', needs.emulator.result)
-  #   name: Kindle
-  #   uses: ./.github/workflows/build.matrix.yml
-  #   with:
-  #     jobs: ${{ fromJSON(needs.prepare.outputs.jobs).kindle }}
-  #     fail_fast: ${{ inputs.fail_fast }}
-  #     all_artifacts: ${{ inputs.all_artifacts }}
-  #     test: ${{ inputs.test }}
+  cervantes:
+    needs: [prepare, emulator]
+    if: |
+      !cancelled() &&
+      fromJSON(needs.prepare.outputs.jobs).cervantes != '[]' &&
+      contains('skipped success', needs.emulator.result)
+    name: Cervantes
+    uses: ./.github/workflows/build.matrix.yml
+    with:
+      jobs: ${{ fromJSON(needs.prepare.outputs.jobs).cervantes }}
+      fail_fast: ${{ inputs.fail_fast }}
+      all_artifacts: ${{ inputs.all_artifacts }}
+      test: ${{ inputs.test }}
 
-  # macos:
-  #   needs: [prepare, emulator]
-  #   if: |
-  #     !cancelled() &&
-  #     fromJSON(needs.prepare.outputs.jobs).macos != '[]' &&
-  #     contains('skipped success', needs.emulator.result)
-  #   name: macOS
-  #   uses: ./.github/workflows/build.matrix.yml
-  #   with:
-  #     jobs: ${{ fromJSON(needs.prepare.outputs.jobs).macos }}
-  #     fail_fast: ${{ inputs.fail_fast }}
-  #     all_artifacts: ${{ inputs.all_artifacts }}
-  #     test: ${{ inputs.test }}
+  kindle:
+    needs: [prepare, emulator]
+    if: |
+      !cancelled() &&
+      fromJSON(needs.prepare.outputs.jobs).kindle != '[]' &&
+      contains('skipped success', needs.emulator.result)
+    name: Kindle
+    uses: ./.github/workflows/build.matrix.yml
+    with:
+      jobs: ${{ fromJSON(needs.prepare.outputs.jobs).kindle }}
+      fail_fast: ${{ inputs.fail_fast }}
+      all_artifacts: ${{ inputs.all_artifacts }}
+      test: ${{ inputs.test }}
 
-  # platform:
-  #   needs: [prepare, emulator]
-  #   if: |
-  #     !cancelled() &&
-  #     fromJSON(needs.prepare.outputs.jobs).platform &&
-  #     contains('skipped success', needs.emulator.result)
-  #   strategy:
-  #     fail-fast: ${{ inputs.fail_fast }}
-  #     matrix:
-  #       include: ${{ fromJSON(fromJSON(needs.prepare.outputs.jobs).platform) }}
-  #   name: ${{ matrix.group }}
-  #   uses: ./.github/workflows/build.matrix.yml
-  #   with:
-  #     jobs: ${{ matrix.jobs }}
-  #     fail_fast: true #${{ inputs.fail_fast }}
-  #     all_artifacts: ${{ inputs.all_artifacts }}
-  #     test: ${{ inputs.test }}
+  kobo:
+    needs: [prepare, emulator]
+    if: |
+      !cancelled() &&
+      fromJSON(needs.prepare.outputs.jobs).kobo != '[]' &&
+      contains('skipped success', needs.emulator.result)
+    name: Kobo
+    uses: ./.github/workflows/build.matrix.yml
+    with:
+      jobs: ${{ fromJSON(needs.prepare.outputs.jobs).kobo }}
+      fail_fast: ${{ inputs.fail_fast }}
+      all_artifacts: ${{ inputs.all_artifacts }}
+      test: ${{ inputs.test }}
 
-  # macos:
-  #   name: macOS
-  #   needs: [prepare, emulator]
-  #   if: |
-  #     !cancelled() &&
-  #     needs.prepare.outputs.macos &&
-  #     contains('skipped success', needs.emulator.result)
-  #   uses: ./.github/workflows/build.matrix.yml
-  #   with:
-  #     jobs: ${{ needs.prepare.outputs.macos }}
-  #     fail_fast: ${{ inputs.fail_fast }}
-  #     all_artifacts: ${{ inputs.all_artifacts }}
-  #     test: ${{ inputs.test }}
+  macos:
+    needs: [prepare, emulator]
+    if: |
+      !cancelled() &&
+      fromJSON(needs.prepare.outputs.jobs).macos != '[]' &&
+      contains('skipped success', needs.emulator.result)
+    name: macOS
+    uses: ./.github/workflows/build.matrix.yml
+    with:
+      jobs: ${{ fromJSON(needs.prepare.outputs.jobs).macos }}
+      fail_fast: ${{ inputs.fail_fast }}
+      all_artifacts: ${{ inputs.all_artifacts }}
+      test: ${{ inputs.test }}
 
-  # platform:
-  #   name: Platform
-  #   needs: [prepare, emulator]
-  #   if: |
-  #     !cancelled() &&
-  #     needs.prepare.outputs.platform &&
-  #     contains('skipped success', needs.emulator.result)
-  #   uses: ./.github/workflows/build.matrix.yml
-  #   with:
-  #     jobs: ${{ needs.prepare.outputs.platform }}
-  #     fail_fast: ${{ inputs.fail_fast }}
-  #     all_artifacts: ${{ inputs.all_artifacts }}
-  #     test: ${{ inputs.test }}
+  pocketbook:
+    needs: [prepare, emulator]
+    if: |
+      !cancelled() &&
+      fromJSON(needs.prepare.outputs.jobs).pocketbook != '[]' &&
+      contains('skipped success', needs.emulator.result)
+    name: pocketbook
+    uses: ./.github/workflows/build.matrix.yml
+    with:
+      jobs: ${{ fromJSON(needs.prepare.outputs.jobs).pocketbook }}
+      fail_fast: ${{ inputs.fail_fast }}
+      all_artifacts: ${{ inputs.all_artifacts }}
+      test: ${{ inputs.test }}
+
+  remarkable:
+    needs: [prepare, emulator]
+    if: |
+      !cancelled() &&
+      fromJSON(needs.prepare.outputs.jobs).remarkable != '[]' &&
+      contains('skipped success', needs.emulator.result)
+    name: reMarkable
+    uses: ./.github/workflows/build.matrix.yml
+    with:
+      jobs: ${{ fromJSON(needs.prepare.outputs.jobs).remarkable }}
+      fail_fast: ${{ inputs.fail_fast }}
+      all_artifacts: ${{ inputs.all_artifacts }}
+      test: ${{ inputs.test }}
 
 # vim: foldmethod=marker foldlevel=0
