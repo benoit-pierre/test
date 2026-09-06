@@ -20,10 +20,8 @@ jobs="$(jq --compact-output --from-file "${jq_script}" --args "$@" <<<"${json}")
 {
     printf 'jobs: '
     <<<"${jobs}" jq --color-output --sort-keys
-    printf 'jobs (partial expansion): '
+    printf 'jobs (expanded): '
     <<<"${jobs}" jq --color-output --sort-keys 'to_entries | map(.value = (.value | fromjson)) | from_entries'
-    printf 'jobs (full expansion): '
-    <<<"${jobs}" jq --color-output --sort-keys '{ "emulator": .emulator | fromjson, "platform": .platform | fromjson | map(.jobs = (.jobs | fromjson)) }' <<<"${jobs}"
 } 1>&2
 # Output
 printf '%s=%s\n' 'jobs' "${jobs}"

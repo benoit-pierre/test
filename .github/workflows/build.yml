@@ -57,7 +57,7 @@ jobs:
     needs: prepare
     if: |
       !cancelled() &&
-      fromJSON(needs.prepare.outputs.jobs).emulator
+      fromJSON(needs.prepare.outputs.jobs).emulator != '[]'
     name: Emulator
     uses: ./.github/workflows/build.matrix.yml
     with:
@@ -66,23 +66,51 @@ jobs:
       all_artifacts: ${{ inputs.all_artifacts }}
       test: ${{ inputs.test }}
 
-  platform:
+  kindle:
     needs: [prepare, emulator]
     if: |
       !cancelled() &&
-      fromJSON(needs.prepare.outputs.jobs).platform &&
+      fromJSON(needs.prepare.outputs.jobs).kindle != '[]' &&
       contains('skipped success', needs.emulator.result)
-    strategy:
-      fail-fast: ${{ inputs.fail_fast }}
-      matrix:
-        include: ${{ fromJSON(fromJSON(needs.prepare.outputs.jobs).platform) }}
-    name: ${{ matrix.group }}
+    name: Kindle
     uses: ./.github/workflows/build.matrix.yml
     with:
-      jobs: ${{ matrix.jobs }}
-      fail_fast: true #${{ inputs.fail_fast }}
+      jobs: ${{ fromJSON(needs.prepare.outputs.jobs).kindle }}
+      fail_fast: ${{ inputs.fail_fast }}
       all_artifacts: ${{ inputs.all_artifacts }}
       test: ${{ inputs.test }}
+
+  macos:
+    needs: [prepare, emulator]
+    if: |
+      !cancelled() &&
+      fromJSON(needs.prepare.outputs.jobs).macos != '[]' &&
+      contains('skipped success', needs.emulator.result)
+    name: macOS
+    uses: ./.github/workflows/build.matrix.yml
+    with:
+      jobs: ${{ fromJSON(needs.prepare.outputs.jobs).macos }}
+      fail_fast: ${{ inputs.fail_fast }}
+      all_artifacts: ${{ inputs.all_artifacts }}
+      test: ${{ inputs.test }}
+
+  # platform:
+  #   needs: [prepare, emulator]
+  #   if: |
+  #     !cancelled() &&
+  #     fromJSON(needs.prepare.outputs.jobs).platform &&
+  #     contains('skipped success', needs.emulator.result)
+  #   strategy:
+  #     fail-fast: ${{ inputs.fail_fast }}
+  #     matrix:
+  #       include: ${{ fromJSON(fromJSON(needs.prepare.outputs.jobs).platform) }}
+  #   name: ${{ matrix.group }}
+  #   uses: ./.github/workflows/build.matrix.yml
+  #   with:
+  #     jobs: ${{ matrix.jobs }}
+  #     fail_fast: true #${{ inputs.fail_fast }}
+  #     all_artifacts: ${{ inputs.all_artifacts }}
+  #     test: ${{ inputs.test }}
 
   # macos:
   #   name: macOS
