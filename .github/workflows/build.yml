@@ -50,7 +50,7 @@ jobs:
         run: |
           set -o noglob
           ./.ci/build.prepare.sh ${{ inputs.jobs }} >>"${GITHUB_OUTPUT}"
-      - run: "echo ${{ [] == [] && 'yes' || 'no' }}"
+      - run: "echo ${{ toJSON('[]') != '[]' && 'yes' || 'no' }}"
     outputs:
       jobs: ${{ steps.generate.outputs.jobs }}
 
