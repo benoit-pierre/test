@@ -61,7 +61,7 @@ jobs:
     name: Emulator
     uses: ./.github/workflows/build.matrix.yml
     with:
-      jobs: ${{ toJSON(fromJSON(needs.prepare.outputs.jobs).emulator) }}
+      jobs: ${{ fromJSON(needs.prepare.outputs.jobs).emulator }}
       fail_fast: ${{ inputs.fail_fast || true }}
       all_artifacts: ${{ inputs.all_artifacts }}
       test: ${{ inputs.test }}
