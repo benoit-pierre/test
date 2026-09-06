@@ -39,6 +39,21 @@ jobs:
 
     steps:
 
+      # Checkout / fetch. {{{
+
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          clean: false
+          fetch-depth: 0
+          fetch-tags: true
+          filter: tree:0
+          show-progress: false
+
+      # }}}
+
+      # Generate artifacts. {{{
+
       - name: Generate artifacts
         run: |
           set -x
