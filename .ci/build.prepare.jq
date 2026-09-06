@@ -31,8 +31,22 @@ def match(filters):
   ]
   # NOTE: we replace an empty job array by an empty string.
   # | if . == [] then "" else . end
-)) #| debug
-| map(.value = (.value | tojson)) | from_entries
+)) | . as $s3 | $s3 #| debug
+| map(.value =
+  ({
+    "if": ["!cancelled()", .value != [] | tostring],
+    "name": .key,
+    "needs": ["prepare"],
+    "uses": "./.github/workflows/build.matrix.yml",
+    "with": {
+      "jobs": (.value | tojson),
+      "fail_fast": $fail_fast,
+      "all_artifacts": $all_artifacts,
+      "test": $test
+    }
+  })
+  | .value."if" = (.value."if" | join(" && "))
+)
+| from_entries
 
 # vim: sw=2
-

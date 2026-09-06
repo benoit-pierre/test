@@ -4,7 +4,11 @@ CI_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=/dev/null
 source "${CI_DIR}/common.sh"
 
-[[ $# -ge 1 ]] || "at least one argument expected, got $#"
+[[ $# -ge 4 ]] || "at least 4 arguments expected, got $#"
+fail_fast="$1"
+all_artifacts="$2"
+test="$3"
+shift 3
 
 jobs_file="${0%/*}/build.jobs.yml"
 jq_script="${0%/*}/build.prepare.jq"
@@ -16,12 +20,12 @@ fi
 
 json="$("${yq[@]}" --output-format=json . "${jobs_file}")"
 
-jobs="$(jq --compact-output --from-file "${jq_script}" --args "$@" <<<"${json}")"
+jobs="$(jq --compact-output --from-file "${jq_script}" --argjson fail_fast "${fail_fast}" --argjson all_artifacts "${all_artifacts}" --argjson test "${test}" --args "$@" <<<"${json}")"
 {
     printf 'jobs: '
     <<<"${jobs}" jq --color-output --sort-keys
-    printf 'jobs (expanded): '
-    <<<"${jobs}" jq --color-output --sort-keys 'to_entries | map(.value = (.value | fromjson)) | from_entries'
+    # printf 'jobs (expanded): '
+    # <<<"${jobs}" jq --color-output --sort-keys 'to_entries | map(.value = (.value | fromjson)) | from_entries'
 } 1>&2
 # Output
 printf '%s=%s\n' 'jobs' "${jobs}"
