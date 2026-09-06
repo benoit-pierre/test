@@ -67,7 +67,6 @@ jobs:
       test: ${{ inputs.test }}
 
   platform:
-    needs: [prepare]
     needs: [prepare, emulator]
     if: |
       !cancelled() &&
