@@ -22,5 +22,5 @@ jobs:
 
   build:
     name: Build
-    needs: lint
+    # needs: lint
     uses: ./.github/workflows/build.yml
