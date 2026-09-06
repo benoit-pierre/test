@@ -4,14 +4,17 @@ permissions:
   contents: read
 
 on:
-  schedule:
-    # Every day at 6 AM (UTC, default branch only).
-    - cron: '0 6 * * *'
+  # schedule:
+  #   # Every day at 6 AM (UTC, default branch only).
+  #   - cron: '0 6 * * *'
   workflow_dispatch:
 
 defaults:
   run:
     shell: bash
+
+env:
+  GH_TELEMETRY: false
 
 jobs:
 
@@ -38,10 +41,12 @@ jobs:
     name: Build
     needs: check
     if: needs.check.outputs.stale
-    uses: ./.github/workflows/_build.yml
+    uses: ./.github/workflows/build.yml
     with:
       jobs: release
+      fail_fast: true
       all_artifacts: true
+      test: false
 
   release:
     name: Release

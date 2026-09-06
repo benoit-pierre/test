@@ -3,13 +3,13 @@
 # Default jobs to run.
 default: &DEFAULT [
   # emulator
-  # emu-gcc,
+  emu-gcc,
   # macos
   # macos-arm64,
   # others
   linux-x86_64,
-  # android-arm,
-  # android-arm64,
+  android-arm,
+  android-arm64,
   kindlepw2,
 ]
 
@@ -22,9 +22,6 @@ master: [
 
 # Release.
 release: [
-  android-arm,
-  linux-x86_64,
-  kindlepw2,
   # macos
   # macos-.*,
   # others
@@ -35,6 +32,10 @@ release: [
   # kobo.*,
   # pocketbook.*,
   # remarkable.*,
+  linux-x86_64,
+  android-arm,
+  android-arm64,
+  kindlepw2,
 ]
 
 # }}}
@@ -125,7 +126,7 @@ platform:
     runs-on: ubuntu-24.04-arm
     image: koreader/koappimage:3.0.0-22.04
     target: linux
-    makeflags: PARALLEL_JOBS=5
+    makeflags: PARALLEL_JOBS=5 MONOLIBTIC=1
     cache_size: 415M
     test: true
     artifact: appimage
@@ -147,7 +148,7 @@ platform:
   - id: cervantes
     job: Cervantes
     image: koreader/kocervantes:3.0.0-22.04
-    makeflags: PARALLEL_JOBS=5
+    makeflags: PARALLEL_JOBS=5 MONOLIBTIC=1
     artifact: txz
 
   # kindle {{{
@@ -156,7 +157,7 @@ platform:
     id: kindle
     job: Kindle
     image: koreader/kokindle:3.0.0-22.04
-    makeflags: PARALLEL_JOBS=5
+    makeflags: PARALLEL_JOBS=5 MONOLIBTIC=1
     cache_size: 390M
     artifact: txz
 
@@ -180,7 +181,7 @@ platform:
     id: kobo
     job: Kobo
     image: koreader/kokobo:3.0.0-22.04
-    makeflags: PARALLEL_JOBS=5
+    makeflags: PARALLEL_JOBS=5 MONOLIBTIC=1
     artifact: txz
 
   - <<: *KOBO
@@ -195,7 +196,7 @@ platform:
     id: pocketbook
     job: PocketBook
     image: koreader/kopb:3.0.0-22.04
-    makeflags: PARALLEL_JOBS=5
+    makeflags: PARALLEL_JOBS=5 MONOLIBTIC=1
     artifact: txz
 
   - <<: *POCKETBOOK
@@ -208,21 +209,21 @@ platform:
 
   - &REMARKABLE
     id: remarkable
-    job: Remarkable
+    job: reMarkable
     image: koreader/koremarkable:3.0.0-22.04
-    makeflags: PARALLEL_JOBS=5
+    makeflags: PARALLEL_JOBS=5 MONOLIBTIC=1
     artifact: txz
 
   - <<: *REMARKABLE
     id: remarkable-aarch64
-    job: Remarkable Pro
+    job: reMarkable Pro
 
   # }}}
 
   - id: sony-prstux
     job: Sony PRSTUX
     image: koreader/kodeb:3.0.0-22.04
-    makeflags: PARALLEL_JOBS=5
+    makeflags: PARALLEL_JOBS=5 MONOLIBTIC=1
     artifact: txz
 
 # }}}

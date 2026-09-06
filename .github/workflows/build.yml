@@ -11,9 +11,18 @@ on:
         default: 'default'
         required: false
         type: string
+      fail_fast:
+        description: 'Stop remaining jobs on failure'
+        default: false
+        type: boolean
       all_artifacts:
         description: 'Generate all artifacts'
         default: false
+        required: false
+        type: boolean
+      test:
+        description: 'Run tests'
+        default: true
         required: false
         type: boolean
   workflow_dispatch:
@@ -54,11 +63,12 @@ jobs:
     if: |
       !cancelled() &&
       needs.prepare.outputs.emulator
-    uses: ./.github/workflows/_build.matrix.yml
+    uses: ./.github/workflows/build.matrix.yml
     with:
       jobs: ${{ needs.prepare.outputs.emulator }}
-      fail_fast: true
+      fail_fast: ${{ inputs.fail_fast || true }}
       all_artifacts: ${{ inputs.all_artifacts }}
+      test: ${{ inputs.test }}
 
   macos:
     name: macOS
@@ -67,10 +77,12 @@ jobs:
       !cancelled() &&
       needs.prepare.outputs.macos &&
       contains('skipped success', needs.emulator.result)
-    uses: ./.github/workflows/_build.matrix.yml
+    uses: ./.github/workflows/build.matrix.yml
     with:
       jobs: ${{ needs.prepare.outputs.macos }}
+      fail_fast: ${{ inputs.fail_fast }}
       all_artifacts: ${{ inputs.all_artifacts }}
+      test: ${{ inputs.test }}
 
   platform:
     name: Platform
@@ -79,9 +91,11 @@ jobs:
       !cancelled() &&
       needs.prepare.outputs.platform &&
       contains('skipped success', needs.emulator.result)
-    uses: ./.github/workflows/_build.matrix.yml
+    uses: ./.github/workflows/build.matrix.yml
     with:
       jobs: ${{ needs.prepare.outputs.platform }}
+      fail_fast: ${{ inputs.fail_fast }}
       all_artifacts: ${{ inputs.all_artifacts }}
+      test: ${{ inputs.test }}
 
 # vim: foldmethod=marker foldlevel=0

@@ -14,7 +14,7 @@ if tag_name="$(git describe --tag --exact-match --match='v[0-9]*' 2>/dev/null)";
     prerelease=
     title="${tag_name}"
 else
-    tag_name='nightly'
+    tag_name='ota'
     channel='nightly'
     draft=
     prerelease=1
@@ -51,7 +51,7 @@ if [[ "${channel}" = 'nightly' ]]; then
 fi
 
 # Label assets.
-out="$("${CI_DIR}/assets_label.sh" "${assets_dir}"/*)"
+out="$("${CI_DIR}/assets_label_and_sort.sh" "${assets_dir}"/*)"
 readarray -t assets <<<"${out}"
 
 # Create / update release.

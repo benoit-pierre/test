@@ -1,0 +1,30 @@
+name: Lint
+
+permissions:
+  contents: read
+
+on:
+  workflow_call:
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+
+  lint:
+
+    name: Lint
+
+    runs-on: ubuntu-latest
+
+    env:
+      BASH_ENV: '/home/ko/.bashrc'
+      CLICOLOR_FORCE: '1'
+
+    steps:
+
+      - name: Lint
+        run: ":"
+
+# vim: foldmethod=marker foldlevel=0
