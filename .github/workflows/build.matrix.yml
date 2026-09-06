@@ -61,8 +61,6 @@ jobs:
           echo "${version}" >version.txt
           artifacts=()
           case '${{ matrix.id }}' in
-            android-arm) exit 1 ;;
-            android-arm64) sleep 60 ;;
             android-arm) artifacts+=(koreader-android-arm-${version}.apk) ;;
             android-arm64) artifacts+=(koreader-android-arm64-${version}.apk) ;;
             linux-x86_64)
