@@ -44,9 +44,7 @@ jobs:
           clean: false
           fetch-depth: 1
           show-progress: false
-          sparse-checkout: |
-            .ci
-            .github/workflows
+          sparse-checkout: .ci
       - name: Generate outputs
         id: generate
         run: |
