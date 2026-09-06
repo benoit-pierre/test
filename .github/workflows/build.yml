@@ -53,49 +53,47 @@ jobs:
           set -o noglob
           ./.ci/build.prepare.sh ${{ inputs.jobs }} >>"${GITHUB_OUTPUT}"
     outputs:
-      emulator: ${{ steps.generate.outputs.emulator }}
-      macos: ${{ steps.generate.outputs.macos }}
-      platform: ${{ steps.generate.outputs.platform }}
+      jobs: ${{ steps.generate.outputs.jobs }}
 
   emulator:
     name: Emulator
     needs: prepare
     if: |
       !cancelled() &&
-      needs.prepare.outputs.emulator
+      fromJSON(needs.prepare.outputs.jobs).Emulator != []
     uses: ./.github/workflows/build.matrix.yml
     with:
-      jobs: ${{ needs.prepare.outputs.emulator }}
+      jobs: ${{ toJSON(fromJSON(needs.prepare.outputs.jobs).Emulator) }}
       fail_fast: ${{ inputs.fail_fast || true }}
       all_artifacts: ${{ inputs.all_artifacts }}
       test: ${{ inputs.test }}
 
-  macos:
-    name: macOS
-    needs: [prepare, emulator]
-    if: |
-      !cancelled() &&
-      needs.prepare.outputs.macos &&
-      contains('skipped success', needs.emulator.result)
-    uses: ./.github/workflows/build.matrix.yml
-    with:
-      jobs: ${{ needs.prepare.outputs.macos }}
-      fail_fast: ${{ inputs.fail_fast }}
-      all_artifacts: ${{ inputs.all_artifacts }}
-      test: ${{ inputs.test }}
+  # macos:
+  #   name: macOS
+  #   needs: [prepare, emulator]
+  #   if: |
+  #     !cancelled() &&
+  #     needs.prepare.outputs.macos &&
+  #     contains('skipped success', needs.emulator.result)
+  #   uses: ./.github/workflows/build.matrix.yml
+  #   with:
+  #     jobs: ${{ needs.prepare.outputs.macos }}
+  #     fail_fast: ${{ inputs.fail_fast }}
+  #     all_artifacts: ${{ inputs.all_artifacts }}
+  #     test: ${{ inputs.test }}
 
-  platform:
-    name: Platform
-    needs: [prepare, emulator]
-    if: |
-      !cancelled() &&
-      needs.prepare.outputs.platform &&
-      contains('skipped success', needs.emulator.result)
-    uses: ./.github/workflows/build.matrix.yml
-    with:
-      jobs: ${{ needs.prepare.outputs.platform }}
-      fail_fast: ${{ inputs.fail_fast }}
-      all_artifacts: ${{ inputs.all_artifacts }}
-      test: ${{ inputs.test }}
+  # platform:
+  #   name: Platform
+  #   needs: [prepare, emulator]
+  #   if: |
+  #     !cancelled() &&
+  #     needs.prepare.outputs.platform &&
+  #     contains('skipped success', needs.emulator.result)
+  #   uses: ./.github/workflows/build.matrix.yml
+  #   with:
+  #     jobs: ${{ needs.prepare.outputs.platform }}
+  #     fail_fast: ${{ inputs.fail_fast }}
+  #     all_artifacts: ${{ inputs.all_artifacts }}
+  #     test: ${{ inputs.test }}
 
 # vim: foldmethod=marker foldlevel=0

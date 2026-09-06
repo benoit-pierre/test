@@ -42,7 +42,7 @@ release: [
 
 # Jobs. {{{
 
-emulator: # {{{
+"Emulator": # {{{
 
   - id: emu-clang
     job: Clang
@@ -67,7 +67,7 @@ emulator: # {{{
 
 # }}}
 
-macos: # {{{
+"macOS": # {{{
 
   - &MACOS
     id: macos-arm64
@@ -92,9 +92,7 @@ macos: # {{{
 
 # }}}
 
-platform:
-
-  # android {{{
+"Android": # {{{
 
   - &ANDROID
     id: android-arm
@@ -116,9 +114,9 @@ platform:
     id: android-x86_64
     job: Android x86_64
 
-  # }}}
+# }}}
 
-  # linux {{{
+"Linux": # {{{
 
   - &LINUX
     id: linux-aarch64
@@ -143,7 +141,9 @@ platform:
     job: Linux x86_64
     runs-on:
 
-  # }}}
+# }}}
+
+"Cervantes": # {{{
 
   - id: cervantes
     job: Cervantes
@@ -151,7 +151,9 @@ platform:
     makeflags: PARALLEL_JOBS=5 MONOLIBTIC=1
     artifact: txz
 
-  # kindle {{{
+# }}}
+
+"Kindle": # {{{
 
   - &KINDLE
     id: kindle
@@ -173,9 +175,9 @@ platform:
     id: kindle-legacy
     job: Kindle Legacy
 
-  # }}}
+# }}}
 
-  # kobo {{{
+"Kobo": # {{{
 
   - &KOBO
     id: kobo
@@ -188,9 +190,9 @@ platform:
     id: kobov5
     job: Kobo v5
 
-  # }}}
+# }}}
 
-  # pocketbook {{{
+"PocketBook": # {{{
 
   - &POCKETBOOK
     id: pocketbook
@@ -203,9 +205,9 @@ platform:
     id: pocketbookhf
     job: PocketBook HF
 
-  # }}}
+# }}}
 
-  # remarkable {{{
+"reMarkable": # {{{
 
   - &REMARKABLE
     id: remarkable
@@ -218,7 +220,9 @@ platform:
     id: remarkable-aarch64
     job: reMarkable Pro
 
-  # }}}
+# }}}
+
+"Sony PRSTUX": # {{{
 
   - id: sony-prstux
     job: Sony PRSTUX

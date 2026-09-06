@@ -14,14 +14,11 @@ fi
 
 json="$("${yq[@]}" --output-format=json . "${jobs_file}")"
 
-for variant in lint emulator macos platform; do
-    jobs="$(jq --compact-output --from-file "${jq_script}" --arg variant "${variant}" --args "$@" <<<"${json}")"
-    {
-        printf '%s jobs: ' "${variant}"
-        jq --color-output --sort-keys <<<"${jobs}"
-    } 1>&2
-    [[ "${jobs}" != '[]' ]] || jobs=''
-    printf '%s=%s\n' "${variant}" "${jobs}"
-done
+jobs="$(jq --compact-output --from-file "${jq_script}" --args "$@" <<<"${json}")"
+{
+    printf '%s jobs: ' "${variant}"
+    jq --color-output --sort-keys <<<"${jobs}"
+} 1>&2
+printf '%s=%s\n' 'jobs' "${jobs}"
 
 # vim: sw=4
