@@ -70,11 +70,12 @@ jobs:
 
   others:
 
-    matrix:
-      include:
-        - name: macOS
-          jobs: ${{ toJSON(fromJSON(needs.prepare.outputs.jobs).macOS) }}
-      fail_fast: ${{ inputs.fail_fast }}
+    strategy:
+      fail-fast: ${{ inputs.fail_fast }}
+      matrix:
+        include:
+          - name: macOS
+            jobs: ${{ toJSON(fromJSON(needs.prepare.outputs.jobs).macOS) }}
 
     name: ${{ matrix.name }}
     needs: [prepare, emulator]
