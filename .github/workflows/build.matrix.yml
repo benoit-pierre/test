@@ -42,8 +42,7 @@ jobs:
 
     steps:
 
-      - run: |
-        jq <<<'${{ fromJSON(inputs.jobs) }}'
+      - run: "jq <<<'${{ fromJSON(inputs.jobs) }}'"
 
       # Checkout / fetch. {{{
 
