@@ -54,33 +54,33 @@ jobs:
       jobs: ${{ steps.generate.outputs.jobs }}
 
   # emulator:
-  #   name: Emulator
   #   needs: prepare
   #   if: |
   #     !cancelled() &&
-  #     fromJSON(needs.prepare.outputs.jobs).Emulator
+  #     fromJSON(needs.prepare.outputs.jobs).emulator
+  #   name: Emulator
   #   uses: ./.github/workflows/build.matrix.yml
   #   with:
-  #     jobs: ${{ toJSON(fromJSON(needs.prepare.outputs.jobs).Emulator) }}
+  #     jobs: ${{ toJSON(fromJSON(needs.prepare.outputs.jobs).emulator) }}
   #     fail_fast: ${{ inputs.fail_fast || true }}
   #     all_artifacts: ${{ inputs.all_artifacts }}
   #     test: ${{ inputs.test }}
 
-  others:
-
+  platform:
+    needs: [prepare]
+    # needs: [prepare, emulator]
+    if: |
+      !cancelled() &&
+      fromJSON(needs.prepare.outputs.jobs).platform
+    # if: |
+    #   !cancelled() &&
+    #   fromJSON(needs.prepare.outputs.jobs).platform
+    #   contains('skipped success', needs.emulator.result)
     strategy:
       fail-fast: ${{ inputs.fail_fast }}
       matrix:
-        include:
-          - name: macOS
-            jobs: ${{ toJSON(fromJSON(needs.prepare.outputs.jobs).macOS) }}
-
-    name: ${{ matrix.name }}
-    needs: [prepare]
-    # needs: [prepare, emulator]
-    # if: |
-    #   !cancelled() &&
-    #   contains('skipped success', needs.emulator.result)
+        include: ${{ toJSON(fromJSON(needs.prepare.outputs.jobs).platform) }}
+    name: ${{ matrix.id }}
     uses: ./.github/workflows/build.matrix.yml
     with:
       jobs: ${{ matrix.jobs }}

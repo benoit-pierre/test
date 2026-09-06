@@ -32,7 +32,17 @@ def match(filters):
   # NOTE: we replace an empty job array by an empty string.
   | if . == [] then "" else . end
 )) #| debug
-| from_entries
+| map({ "id": .key, "jobs": .value })
+# Split emulator & platform sets.
+| {
+  "emulator": (.[] | select(.id == "Emulator") | .jobs | tojson),
+  "platform": (
+    [.[] | select(.id != "Emulator" and .jobs != "") | .jobs = (.jobs | tojson)]
+    # Here too replace an empty array by an empty string.
+    | if . == [] then "" else . end
+  )
+}
+# | from_entries
 
 # vim: sw=2
 

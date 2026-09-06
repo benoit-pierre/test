@@ -1,8 +1,10 @@
 #!/bin/bash
 
-set -eo pipefail
+CI_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=/dev/null
+source "${CI_DIR}/common.sh"
 
-[[ $# -ge 1 ]]
+[[ $# -ge 0 ]] || "at least one argument expected, got $#"
 
 jobs_file="${0%/*}/build.jobs.yml"
 jq_script="${0%/*}/build.prepare.jq"
@@ -15,10 +17,20 @@ fi
 json="$("${yq[@]}" --output-format=json . "${jobs_file}")"
 
 jobs="$(jq --compact-output --from-file "${jq_script}" --args "$@" <<<"${json}")"
+# Prettry print with jobs expanded.
 {
-    printf '%s jobs: ' "${variant}"
-    jq --color-output --sort-keys <<<"${jobs}"
+    printf 'jobs: '
+    jq --color-output --sort-keys '
+{
+    "emulator": .emulator | fromjson,
+    "platform":
+        if .platform == ""
+        then ""
+        else .platform | map(.jobs = (.jobs | fromjson))
+        end
+}' <<<"${jobs}"
 } 1>&2
+# Output
 printf '%s=%s\n' 'jobs' "${jobs}"
 
 # vim: sw=4
