@@ -222,14 +222,4 @@ remarkable: # {{{
 
 # }}}
 
-sony-prstux: # {{{
-
-  - id: sony-prstux
-    job: Sony PRSTUX
-    image: koreader/kodeb:3.0.0-22.04
-    makeflags: PARALLEL_JOBS=5 MONOLIBTIC=1
-    artifact: txz
-
-# }}}
-
 # vim: foldmethod=marker foldlevel=0
