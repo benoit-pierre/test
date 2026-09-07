@@ -70,7 +70,7 @@ jobs:
     needs: [prepare, emulator]
     if: |
       !cancelled() &&
-      contains(fromJSON("[\"android\"]", job.id) &&
+      contains(fromJSON('["android"]', job.id) &&
       fromJSON(needs.prepare.outputs.jobs).android != '[]' &&
       contains('skipped success', needs.emulator.result)
     name: Android
