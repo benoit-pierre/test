@@ -41,7 +41,7 @@ jobs:
         id: check
         env:
           GH_TOKEN: ${{ github.token }}
-        run: ./.ci/release_staleness_check.sh >>"${GITHUB_OUTPUT}"
+        run: ./.ci/release_staleness_check.sh
     outputs:
       stale: ${{ steps.check.outputs.stale }}
   
