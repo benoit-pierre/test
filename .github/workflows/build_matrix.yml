@@ -39,7 +39,7 @@ jobs:
 
     steps:
 
-      # Checkout / fetch. {{{
+      # Checkout. {{{
 
       - name: Checkout
         uses: actions/checkout@v7

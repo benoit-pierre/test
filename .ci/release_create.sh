@@ -42,7 +42,7 @@ fi
 
 if [[ "${channel}" = 'nightly' ]]; then
     # Generate OTA assets.
-    "${CI_DIR}/ota_generate.sh" "${assets_dir}" "${channel}"
+    "${CI_DIR}/ota_assets_generate.sh" "${assets_dir}" "${channel}"
     # Tag the nightly.
     run git config user.name 'Github Actions'
     run git config user.email '<>'
@@ -68,7 +68,7 @@ run gh release upload --clobber "${tag_name}" "${assets[@]}"
 # Cleanup:
 if [[ "${channel}" = 'nightly' ]]; then
     # - nightly: old versions
-    "${CI_DIR}/ota_trim.sh"
+    "${CI_DIR}/ota_release_trim.sh"
 else
     # - stable: left-overs from previous version
     out="$(comm -23 <(printf '%s\n' "${old_assets[@]}" | sort) <(printf '%s\n' "${assets[@]}" | sed 's,^.*/,,;s,#.*$,,;' | sort))"

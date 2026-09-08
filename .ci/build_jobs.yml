@@ -5,7 +5,7 @@ default: &DEFAULT [
   # emulator
   emu-gcc,
   # macos
-  # macos-arm64,
+  macos-arm64,
   # others
   linux-x86_64,
   android-arm,
@@ -48,7 +48,7 @@ emulator: # {{{
     job: Clang
     image: koreader/kobase-clang:3.0.0-22.04
     target: ""
-    makeflags: PARALLEL_JOBS=5 KODEBUG= USE_CLANG=1
+    env: PARALLEL_JOBS=5 KODEBUG= USE_CLANG=1
     test: true
 
   - &EMU_GCC
@@ -56,14 +56,14 @@ emulator: # {{{
     job: GCC
     image: koreader/kobase:3.0.0-22.04
     target: ""
-    makeflags: PARALLEL_JOBS=5 KODEBUG=
+    env: PARALLEL_JOBS=5 KODEBUG=
     cache_size: 240M
     test: true
 
   - <<: *EMU_GCC
     id: emu-gcc-debug
     job: GCC Debug
-    makeflags: PARALLEL_JOBS=5 KODEBUG=1
+    env: PARALLEL_JOBS=5 KODEBUG=1
 
 # }}}
 
@@ -72,8 +72,8 @@ android: # {{{
   - &ANDROID
     id: android-arm
     job: Android ARM
-    image: koreader/koandroid:3.0.0-22.04
-    makeflags: PARALLEL_JOBS=5
+    image: koreader/koandroid:3.1.0-22.04
+    env: PARALLEL_JOBS=5
     cache_size: 260M
     artifact: apk
 
@@ -96,7 +96,7 @@ cervantes: # {{{
   - id: cervantes
     job: Cervantes
     image: koreader/kocervantes:3.0.0-22.04
-    makeflags: PARALLEL_JOBS=5 MONOLIBTIC=1
+    env: PARALLEL_JOBS=5
     artifact: txz
 
 # }}}
@@ -107,7 +107,7 @@ kindle: # {{{
     id: kindle
     job: Kindle
     image: koreader/kokindle:3.0.0-22.04
-    makeflags: PARALLEL_JOBS=5 MONOLIBTIC=1
+    env: PARALLEL_JOBS=5
     cache_size: 390M
     artifact: txz
 
@@ -131,7 +131,7 @@ kobo: # {{{
     id: kobo
     job: Kobo
     image: koreader/kokobo:3.0.0-22.04
-    makeflags: PARALLEL_JOBS=5 MONOLIBTIC=1
+    env: PARALLEL_JOBS=5
     artifact: txz
 
   - <<: *KOBO
@@ -148,17 +148,15 @@ linux: # {{{
     runs-on: ubuntu-24.04-arm
     image: koreader/koappimage:3.0.0-22.04
     target: linux
-    makeflags: PARALLEL_JOBS=5 MONOLIBTIC=1
+    env: PARALLEL_JOBS=5
     cache_size: 415M
     test: true
     artifact: appimage
 
-  # FIXME: does not work, no support for using a docker image with
-  # the `--platform=…` docker argument (see `build.matrix.yml`)…
-  # - <<: *LINUX
-  #   id: linux-armhf
-  #   job: Linux ARMhf
-  #   platform: aarch64
+  - <<: *LINUX
+    id: linux-armhf
+    job: Linux ARMhf
+    platform: linux/arm/v7
 
   - <<: *LINUX
     id: linux-x86_64
@@ -176,7 +174,7 @@ macos: # {{{
     runs-on: macos-15
     xcode_version: "16.4"
     macosx_deployment_target: "11.0"
-    makeflags: PARALLEL_JOBS=4
+    env: PARALLEL_JOBS=4
     cache_size: 256MB
     target: macos
     test: true
@@ -188,7 +186,7 @@ macos: # {{{
     cache: macos.15_x86_64_xcode.16.4_10.15
     runs-on: macos-15-intel
     macosx_deployment_target: "10.15"
-    makeflags: PARALLEL_JOBS=5
+    env: PARALLEL_JOBS=5
 
 # }}}
 
@@ -198,7 +196,7 @@ pocketbook: # {{{
     id: pocketbook
     job: PocketBook
     image: koreader/kopb:3.0.0-22.04
-    makeflags: PARALLEL_JOBS=5 MONOLIBTIC=1
+    env: PARALLEL_JOBS=5
     artifact: txz
 
   - <<: *POCKETBOOK
@@ -213,7 +211,7 @@ remarkable: # {{{
     id: remarkable
     job: reMarkable
     image: koreader/koremarkable:3.0.0-22.04
-    makeflags: PARALLEL_JOBS=5 MONOLIBTIC=1
+    env: PARALLEL_JOBS=5
     artifact: txz
 
   - <<: *REMARKABLE

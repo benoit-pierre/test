@@ -49,7 +49,7 @@ jobs:
         id: generate
         run: |
           set -o noglob
-          ./.ci/build.prepare.sh ${{ inputs.jobs }} >>"${GITHUB_OUTPUT}"
+          ./.ci/build_matrix_generate.sh ${{ inputs.jobs }}
     outputs:
       jobs: ${{ steps.generate.outputs.jobs }}
 
@@ -59,7 +59,7 @@ jobs:
       !cancelled() &&
       fromJSON(needs.prepare.outputs.jobs).emulator != '[]'
     name: Emulator
-    uses: ./.github/workflows/build.matrix.yml
+    uses: ./.github/workflows/build_matrix.yml
     with:
       jobs: ${{ fromJSON(needs.prepare.outputs.jobs).emulator }}
       fail_fast: ${{ inputs.fail_fast || true }}
@@ -73,7 +73,7 @@ jobs:
       fromJSON(needs.prepare.outputs.jobs).android != '[]' &&
       contains('skipped success', needs.emulator.result)
     name: Android
-    uses: ./.github/workflows/build.matrix.yml
+    uses: ./.github/workflows/build_matrix.yml
     with:
       jobs: ${{ fromJSON(needs.prepare.outputs.jobs).android }}
       fail_fast: ${{ inputs.fail_fast }}
@@ -87,7 +87,7 @@ jobs:
       fromJSON(needs.prepare.outputs.jobs).cervantes != '[]' &&
       contains('skipped success', needs.emulator.result)
     name: Cervantes
-    uses: ./.github/workflows/build.matrix.yml
+    uses: ./.github/workflows/build_matrix.yml
     with:
       jobs: ${{ fromJSON(needs.prepare.outputs.jobs).cervantes }}
       fail_fast: ${{ inputs.fail_fast }}
@@ -101,7 +101,7 @@ jobs:
       fromJSON(needs.prepare.outputs.jobs).kindle != '[]' &&
       contains('skipped success', needs.emulator.result)
     name: Kindle
-    uses: ./.github/workflows/build.matrix.yml
+    uses: ./.github/workflows/build_matrix.yml
     with:
       jobs: ${{ fromJSON(needs.prepare.outputs.jobs).kindle }}
       fail_fast: ${{ inputs.fail_fast }}
@@ -115,7 +115,7 @@ jobs:
       fromJSON(needs.prepare.outputs.jobs).kobo != '[]' &&
       contains('skipped success', needs.emulator.result)
     name: Kobo
-    uses: ./.github/workflows/build.matrix.yml
+    uses: ./.github/workflows/build_matrix.yml
     with:
       jobs: ${{ fromJSON(needs.prepare.outputs.jobs).kobo }}
       fail_fast: ${{ inputs.fail_fast }}
@@ -129,7 +129,7 @@ jobs:
       fromJSON(needs.prepare.outputs.jobs).linux != '[]' &&
       contains('skipped success', needs.emulator.result)
     name: Linux
-    uses: ./.github/workflows/build.matrix.yml
+    uses: ./.github/workflows/build_matrix.yml
     with:
       jobs: ${{ fromJSON(needs.prepare.outputs.jobs).linux }}
       fail_fast: ${{ inputs.fail_fast }}
@@ -143,7 +143,7 @@ jobs:
       fromJSON(needs.prepare.outputs.jobs).macos != '[]' &&
       contains('skipped success', needs.emulator.result)
     name: macOS
-    uses: ./.github/workflows/build.matrix.yml
+    uses: ./.github/workflows/build_matrix.yml
     with:
       jobs: ${{ fromJSON(needs.prepare.outputs.jobs).macos }}
       fail_fast: ${{ inputs.fail_fast }}
@@ -156,8 +156,8 @@ jobs:
       !cancelled() &&
       fromJSON(needs.prepare.outputs.jobs).pocketbook != '[]' &&
       contains('skipped success', needs.emulator.result)
-    name: pocketbook
-    uses: ./.github/workflows/build.matrix.yml
+    name: PocketBook
+    uses: ./.github/workflows/build_matrix.yml
     with:
       jobs: ${{ fromJSON(needs.prepare.outputs.jobs).pocketbook }}
       fail_fast: ${{ inputs.fail_fast }}
@@ -171,7 +171,7 @@ jobs:
       fromJSON(needs.prepare.outputs.jobs).remarkable != '[]' &&
       contains('skipped success', needs.emulator.result)
     name: reMarkable
-    uses: ./.github/workflows/build.matrix.yml
+    uses: ./.github/workflows/build_matrix.yml
     with:
       jobs: ${{ fromJSON(needs.prepare.outputs.jobs).remarkable }}
       fail_fast: ${{ inputs.fail_fast }}

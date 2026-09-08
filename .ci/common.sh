@@ -3,6 +3,9 @@
 set -e
 set -o pipefail
 
+# Avoid jumbled stderr / stdout outputs…
+exec 2>&1
+
 ANSI_RED="\033[31;1m"
 # shellcheck disable=SC2034
 ANSI_GREEN="\033[32;1m"
