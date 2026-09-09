@@ -51,7 +51,7 @@ latest_make() {
     local l="${2%-v[0-9]*}-latest-${channel}"
     case "$1" in
         link)
-            run sh -c 'echo "$1" >"$2"' "${2}" "${l}"
+            run sh -c 'echo "$1" >"$2"' -- "${2}" "${l}"
             ;;
         copy)
             l+=".${2##*.}"
