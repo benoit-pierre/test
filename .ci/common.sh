@@ -6,12 +6,11 @@ set -o pipefail
 # Avoid jumbled stderr / stdout outputs…
 exec 2>&1
 
-ANSI_RED="\033[31;1m"
+declare -r ANSI_RED="\033[31;1m"
+declare -r ANSI_GREEN="\033[32;1m"
 # shellcheck disable=SC2034
-ANSI_GREEN="\033[32;1m"
-# shellcheck disable=SC2034
-ANSI_BLUE="\033[34;1m"
-ANSI_RESET="\033[0m"
+declare -r ANSI_BLUE="\033[34;1m"
+declare -r ANSI_RESET="\033[0m"
 
 DRY_RUN="${DRY_RUN:-}"
 
@@ -23,8 +22,12 @@ quote() {
     printf '\n'
 }
 
-die() {
+err() {
     echo -e "${ANSI_RED}$*${ANSI_RESET}" 1>&2
+}
+
+die() {
+    err "$*"
     exit 1
 }
 
@@ -35,6 +38,9 @@ run() {
         code=0
     else
         "${@#█:}" && code=0 || code=$?
+    fi
+    if [[ "${code}" != 0 ]]; then
+        err "Error: exit code ${code}"
     fi
     echo "::endgroup::" 1>&2
     return "${code}"

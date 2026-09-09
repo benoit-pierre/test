@@ -22,6 +22,9 @@ container_exec() {
     else
         docker exec --tty "${CONTAINER_ID}" "${@#█:}" && code=0 || code=$?
     fi
+    if [[ "${code}" != 0 ]]; then
+        err "Error: exit code ${code}"
+    fi
     echo "::endgroup::"
     return "${code}" 1>&2
 }
@@ -115,7 +118,7 @@ for a in koreader-{cervantes,kindle*,kobo*,pocketbook*,remarkable*,sony-prstux*}
     latest_make copy "${a%.tar*}.${t}"
 done
 
-echo -e "${ANSI_GREEN}popd -${ANSI_RESET}" 1>&2
+echo -e "${ANSI_GREEN}popd${ANSI_RESET}" 1>&2
 popd >/dev/null || exit
 
 # vim: sw=4
