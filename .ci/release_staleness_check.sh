@@ -4,8 +4,6 @@ CI_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=/dev/null
 source "${CI_DIR}/common.sh"
 
-echo -e "${ANSI_BLUE}$(quote "$0" "$@")${ANSI_RESET}"
-
 [[ $# -eq 0 ]] || "no argument expected, got $#"
 
 stale='true'

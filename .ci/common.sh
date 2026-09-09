@@ -69,3 +69,6 @@ travis_retry() {
     set -e
     return ${result}
 }
+
+echo -e "${ANSI_BLUE}$(quote "$0" "$@")${ANSI_RESET}" 1>&2
+trap 'err "Error: exit code $?"' ERR
