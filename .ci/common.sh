@@ -16,6 +16,7 @@ ANSI_RESET="\033[0m"
 DRY_RUN="${DRY_RUN:-}"
 
 quote() {
+    [[ $# -ge 0 ]] || return 0
     printf '%q' "$1"
     shift
     [[ $# -eq 0 ]] || printf ' %q' "$@"
