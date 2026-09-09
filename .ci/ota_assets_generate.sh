@@ -16,7 +16,7 @@ trap 'run docker rm --force "${CONTAINER_ID}"' EXIT
 
 container_exec() {
     local code
-    echo -e "::group::docker exec … ${ANSI_GREEN}$(printf '%q ' "${@/#█:*/████████}")${ANSI_RESET}" 1>&2
+    echo -e "::group::docker exec … ${ANSI_GREEN}$(quote "${@/#█:*/████████}")${ANSI_RESET}" 1>&2
     if [[ -n "${DRY_RUN}" ]]; then
         code=0
     else
@@ -51,7 +51,8 @@ latest_make() {
     local l="${2%-v[0-9]*}-latest-${channel}"
     case "$1" in
         link)
-            run sh -c 'echo "$1" >"$2"' -- "${2}" "${l}"
+            echo -e "${ANSI_GREEN}echo $(quote "${2}") >$(quote "${l}")${ANSI_RESET}" 1>&2
+            [[ -n "${DRY_RUN}" ]] || echo "$2" >"${l}"
             ;;
         copy)
             l+=".${2##*.}"

@@ -15,6 +15,13 @@ ANSI_RESET="\033[0m"
 
 DRY_RUN="${DRY_RUN:-}"
 
+quote() {
+    printf '%q' "$1"
+    shift
+    [[ $# -eq 0 ]] || printf ' %q' "$@"
+    printf '\n'
+}
+
 die() {
     echo -e "${ANSI_RED}$*${ANSI_RESET}" 1>&2
     exit 1
@@ -22,7 +29,7 @@ die() {
 
 run() {
     local code
-    echo -e "::group::${ANSI_GREEN}$(printf '%q ' "${@/#█:*/████████}")${ANSI_RESET}" 1>&2
+    echo -e "::group::${ANSI_GREEN}$(quote "${@/#█:*/████████}")${ANSI_RESET}" 1>&2
     if [[ -n "${DRY_RUN}" ]]; then
         code=0
     else
