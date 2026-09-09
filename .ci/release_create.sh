@@ -4,6 +4,8 @@ CI_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=/dev/null
 source "${CI_DIR}/common.sh"
 
+echo -e "${ANSI_BLUE}$(quote "$0" "$@")${ANSI_RESET}"
+
 [[ $# -eq 1 ]] || "1 argument expected, got $#"
 assets_dir="$1"
 shift
@@ -42,7 +44,7 @@ fi
 
 if [[ "${channel}" = 'nightly' ]]; then
     # Generate OTA assets.
-    "${CI_DIR}/ota_assets_generate.sh" "${assets_dir}" "${channel}"
+    run "${CI_DIR}/ota_assets_generate.sh" "${assets_dir}" "${channel}"
 fi
 
 # Label assets.
@@ -68,7 +70,7 @@ fi
 # Cleanup:
 if [[ "${channel}" = 'nightly' ]]; then
     # - nightly: old versions
-    "${CI_DIR}/ota_release_trim.sh"
+    run "${CI_DIR}/ota_release_trim.sh"
 else
     # - stable: left-overs from previous version
     out="$(comm -23 <(printf '%s\n' "${old_assets[@]}" | sort) <(printf '%s\n' "${assets[@]}" | sed 's,^.*/,,;s,#.*$,,;' | sort))"

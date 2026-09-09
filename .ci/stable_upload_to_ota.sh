@@ -4,6 +4,8 @@ CI_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=/dev/null
 source "${CI_DIR}/common.sh"
 
+echo -e "${ANSI_BLUE}$(quote "$0" "$@")${ANSI_RESET}"
+
 [[ $# -eq 2 ]] || "2 arguments expected, got $#"
 assets_dir="$1"
 release_tag="$2"
@@ -13,7 +15,7 @@ shift 1
 run gh release download --dir="${assets_dir}" "${release_tag}"
 
 # Generate OTA assets.
-"${CI_DIR}/ota_assets_generate.sh" "${assets_dir}" stable
+run "${CI_DIR}/ota_assets_generate.sh" "${assets_dir}" stable
 
 # Label assets.
 out="$("${CI_DIR}/assets_label_and_sort.sh" "${assets_dir}"/*)"
@@ -23,4 +25,4 @@ readarray -t assets <<<"${out}"
 run gh release upload --clobber ota "${assets[@]}"
 
 # And trim old versions.
-"${CI_DIR}/ota_release_trim.sh"
+run "${CI_DIR}/ota_release_trim.sh"
