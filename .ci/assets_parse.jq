@@ -47,12 +47,14 @@ def asset_parse:
          capture("/?koreader_" + $version_rx + "-1_" + $platform_rx + $extension_rx)
          | .platform = "linux-" + .platform
     )
+    # koreader-android-arm-latest-nightly
     # koreader-kindlepw2-latest-nightly.kotasync
     # koreader-kindlepw2-latest-stable.zsync
     // (
-      capture("/?koreader-" + $platform_rx + "-latest-(?<version>nightly|stable)" + $extension_rx)
+      capture("/?koreader-" + $platform_rx + "-latest-(?<version>nightly|stable)(" + $extension_rx + ")?")
       | .base_version = .version
       | .sort_version = [666]
+      | .extension //= "link"
       | .ota = true
       | .stable = .base_version == "stable"
     )
