@@ -47,7 +47,7 @@ if [[ "${channel}" = 'nightly' ]]; then
     run git config user.name 'Github Actions'
     run git config user.email '<>'
     run git tag -m '' -f "${tag_name}"
-    run git push -f origin "tags/${tag_name}"
+    run git push -f origin "refs/tags/${tag_name}"
 fi
 
 # Label assets.
