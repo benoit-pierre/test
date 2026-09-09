@@ -12,8 +12,6 @@ readarray -t assets <<<"${out}"
 printf '%bOTA assets:%b\n' "${ANSI_BLUE}" "${ANSI_RESET}"
 printf '%s\n' "${assets[@]}"
 
-set -x
-
 # Trim assets:
 # - keep the last stable
 # - keep the last 3 nightlies more recent the latest stable

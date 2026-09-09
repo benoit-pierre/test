@@ -80,7 +80,7 @@ jobs:
           for a in "${artifacts[@]}"; do
             case "${a}" in
               *.7z) 7z a "${a}" version.txt ;;
-              *.apk | *.zip) zip "${a}" version.txt ;;
+              *.apk | *.zip) cp fake.apk "${a}" ;;
               *.AppImage) cp /usr/bin/true "${a}" ;;
               *.deb) ar q "${a}" version.txt ;;
               *.targz) tar czf "${a}" version.txt ;;

@@ -21,11 +21,12 @@ die() {
 }
 
 run() {
-    echo -e "::group::${ANSI_GREEN}$(printf '%q ' "$@")${ANSI_RESET}" 1>&2
+    local code
+    echo -e "::group::${ANSI_GREEN}$(printf '%q ' "${@/#█:*/████████}")${ANSI_RESET}" 1>&2
     if [[ -n "${DRY_RUN}" ]]; then
         code=0
     else
-        "$@" && code=0 || code=$?
+        "${@#█:}" && code=0 || code=$?
     fi
     echo "::endgroup::" 1>&2
     return "${code}"
