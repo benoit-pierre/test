@@ -69,13 +69,14 @@ if out="$(gh release view --json assets --jq '.assets[].name | select(test("^kor
     trap 'run rm -rf "${assets_dir}/ota"' EXIT
 fi
 
-pushd "${assets_dir}" || exit
+echo -e "${ANSI_GREEN}pushd assets_dir${ANSI_RESET}" 1>&2
+pushd "${assets_dir}" >/dev/null || exit
 
 # Sign APKs.
 if [[ -n "${APK_SIGN_KEY_ALIAS}" ]] && [[ -n "${APK_SIGN_KEY_PASS}" ]] && [[ -n "${APK_SIGN_STORE_BASE64}" ]] && [[ -n "${APK_SIGN_STORE_PASS}" ]]; then (
     set +x
     # Setup temporary store.
-    apk_sign_store="$(mktemp --tmpdir=. -t apk_sign.XXXXXXXXXX)"
+    apk_sign_store="$(mktemp --tmpdir=. -t apk_sign_store.XXXXXXXXXX)"
     trap 'rm -f "${apk_sign_store}"' EXIT
     base64 -d >"${apk_sign_store}" <<<"${APK_SIGN_STORE_BASE64}"
     # Signing helper.
@@ -91,7 +92,7 @@ if [[ -n "${APK_SIGN_KEY_ALIAS}" ]] && [[ -n "${APK_SIGN_KEY_PASS}" ]] && [[ -n 
         --apks
     )
     # Sign APKS.
-    for a in *.apk; do
+    for a in koreader-*.apk; do
         [[ -e "${a}" ]] || continue
         # Sign.
         container_exec "${apk_sign_cmd[@]}" "${a}"
@@ -113,6 +114,7 @@ for a in koreader-{cervantes,kindle*,kobo*,pocketbook*,remarkable*,sony-prstux*}
     latest_make copy "${a%.tar*}.${t}"
 done
 
+echo -e "${ANSI_GREEN}popd -${ANSI_RESET}" 1>&2
 popd >/dev/null || exit
 
 # vim: sw=4

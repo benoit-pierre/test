@@ -79,4 +79,8 @@ jobs:
       - name: Release
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          APK_SIGN_KEY_ALIAS: ${{ secrets.APK_SIGN_KEY_ALIAS }}
+          APK_SIGN_KEY_PASS: ${{ secrets.APK_SIGN_KEY_PASS }}
+          APK_SIGN_STORE_BASE64: ${{ secrets.APK_SIGN_STORE_BASE64 }}
+          APK_SIGN_STORE_PASS: ${{ secrets.APK_SIGN_STORE_PASS }}
         run: ./.ci/release_create.sh assets
