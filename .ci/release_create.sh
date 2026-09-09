@@ -43,11 +43,6 @@ fi
 if [[ "${channel}" = 'nightly' ]]; then
     # Generate OTA assets.
     "${CI_DIR}/ota_assets_generate.sh" "${assets_dir}" "${channel}"
-    # Tag the nightly.
-    run git config user.name 'Github Actions'
-    run git config user.email '<>'
-    run git tag -m '' -f "${tag_name}"
-    run git push -f origin "refs/tags/${tag_name}"
 fi
 
 # Label assets.
@@ -64,6 +59,11 @@ run "${cmd[@]}"
 
 # Upload assets.
 run gh release upload --clobber "${tag_name}" "${assets[@]}"
+
+# Update OTA tag.
+if [[ "${mode}" = 'create' ]]; then
+    run git push -f origin "${target}:refs/tags/${tag_name}"
+fi
 
 # Cleanup:
 if [[ "${channel}" = 'nightly' ]]; then
