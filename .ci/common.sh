@@ -4,7 +4,7 @@ set -e
 set -o pipefail
 
 # Avoid jumbled stderr / stdout outputs…
-exec 2>&1
+# exec 2>&1
 
 declare -r ANSI_RED="\033[31;1m"
 declare -r ANSI_GREEN="\033[32;1m"
