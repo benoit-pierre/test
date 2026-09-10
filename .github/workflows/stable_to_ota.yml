@@ -38,4 +38,6 @@ jobs:
           show-progress: false
           sparse-checkout: .ci
       - name: Upload
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: ./.ci/stable_upload_to_ota.sh assets '${{ inputs.tag_name || github.event.release.tag_name }}'

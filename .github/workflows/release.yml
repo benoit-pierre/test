@@ -109,4 +109,6 @@ jobs:
           path: assets
           skip-decompress: true
       - name: Release
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: ./.ci/release_create.sh assets
