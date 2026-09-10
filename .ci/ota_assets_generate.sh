@@ -75,7 +75,7 @@ while read -r line; do
             esac
             echo "${line}"
             if [[ "${asset[stable]}" == 'true' ]] && [[ "${asset[commit_hash]}" ]]; then
-                commit_count="$(git rev-list --count "${asset[base_version]}")"
+                commit_count="$(git rev-list --count "v${asset[base_version]}")"
                 run sh -c "printf '%s\n%u\n' 'v${asset[version]}' '${commit_count}' >koreader-android-fdroid-latest"
             fi
             ;;
