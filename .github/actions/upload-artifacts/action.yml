@@ -19,7 +19,7 @@ runs:
   steps:
 
       - name: Expand patterns
-        id: list
+        id: expand
         shell: bash
         run: |
           set -x
