@@ -31,7 +31,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: *ACTION_CHECKOUT actions/checkout@v7
+        uses: &ACTION_CHECKOUT actions/checkout@v7
         with:
           clean: false
           fetch-tags: true
@@ -63,17 +63,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: &ACTION_CHECKOUT
+        uses: *ACTION_CHECKOUT
         with:
           clean: false
           show-progress: false
           sparse-checkout: .ci
       - name: Download APKs
-        uses: *ACTION_DOWNLOAD_ARTIFACT actions/download-artifact@v8
+        uses: &ACTION_DOWNLOAD_ARTIFACT actions/download-artifact@v8
         with:
           merge-multiple: true
           path: assets
-          pattern: *.apk
+          pattern: "*.apk"
           skip-decompress: true
       - name: Sign APKs
         if: hashFiles('assets/*.apk')
@@ -97,7 +97,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: &ACTION_CHECKOUT
+        uses: *ACTION_CHECKOUT
         with:
           clean: false
           fetch-tags: true
@@ -105,7 +105,7 @@ jobs:
           sparse-checkout: .ci
           token: ${{ secrets.GH_TOKEN }}
       - name: Download artifacts
-        uses: &ACTION_DOWNLOAD_ARTIFACT
+        uses: *ACTION_DOWNLOAD_ARTIFACT
         with:
           merge-multiple: true
           path: assets
