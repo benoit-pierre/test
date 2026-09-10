@@ -59,6 +59,6 @@ for a in "${artifacts[@]}"; do
             fi
             run xz -9 --block-list=$((size - 512 * 2)),0 "${a}"
             ;;
-        *.zip) run zip a "${a}" version.txt ;;
+        *.zip) run zip "${a}" version.txt ;;
     esac
 done
