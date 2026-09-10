@@ -23,8 +23,9 @@ runs:
         shell: bash
         run: |
           set -x
+          patterns=(${{ inputs.patterns }})
           set --
-          for m in ${{ inputs.patterns }}; do
+          for m in "${patterns[@]}"; do
             if [[ -e "${m}" ]]; then
               set -- "$@" "${m}"
             fi
