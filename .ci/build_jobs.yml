@@ -16,26 +16,20 @@ default: &DEFAULT [
 # Extra jobs when on master.
 master: [
   *DEFAULT,
-  # emu-clang,
-  # macos-x86_64,
+  emu-clang,
+  macos-x86_64,
 ]
 
 # Release.
 release: [
-  # macos
-  # macos-.*,
-  # others
-  # linux-.*,
-  # android-.*,
-  # cervantes,
-  # kindle.*,
-  # kobo.*,
-  # pocketbook.*,
-  # remarkable.*,
-  linux-x86_64,
-  android-arm,
-  android-arm64,
-  kindlepw2,
+  android-.*,
+  cervantes,
+  kindle.*,
+  kobo.*,
+  linux-.*,
+  macos-.*,
+  pocketbook.*,
+  remarkable.*,
 ]
 
 # }}}

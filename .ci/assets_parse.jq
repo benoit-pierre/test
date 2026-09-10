@@ -4,6 +4,8 @@ def asset_parse:
     # Android
     "android-arm": "Android ARM",
     "android-arm64": "Android ARM64",
+    "android-x86": "Android x86",
+    "android-x86_64": "Android x86_64",
     # Kindle
     "kindle": "Kindle",
     "kindle-legacy": "Kindle Legacy",
@@ -39,6 +41,8 @@ def asset_parse:
     # Android
     "android-arm": "apk link",
     "android-arm64": "apk link",
+    "android-x86": "apk link",
+    "android-x86_64": "apk link",
     # Linux
     "appimage-aarch64": "AppImage link",
     "appimage-armhf": "AppImage link",
@@ -55,7 +59,6 @@ def asset_parse:
   | "\\.(?<extension>(7z|apk|AppImage|deb|kotasync|targz|tar\\.xz|zip|zsync))$" as $extension_rx
   | $file | (
     # koreader-linux-x86_64-v2023.06.1.tar.xz
-    # koreader-ubuntu-touch-arm-v2015.11-640-g17e9a8e_2018-03-09.targz
     # koreader-android-arm-v2015.11-654-gb7392f7_2018-03-09.apk
     capture("/?koreader-" + $platform_rx + "-v" + $version_rx + $extension_rx)
     # koreader-v2023.06.1-x86_64.AppImage
