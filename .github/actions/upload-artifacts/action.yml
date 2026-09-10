@@ -92,7 +92,7 @@ runs:
           path: ${{ steps.expand.outputs.artifact_7 }}
           overwrite: ${{ inputs.overwrite }}
 
-      - name: Upload artifact (8/${{ steps.expand.outputs.artifact_counartifact_count
+      - name: Upload artifact (8/${{ steps.expand.outputs.artifact_count }})
         if: steps.expand.outputs.artifact_8
         uses: actions/upload-artifact@v7
         with:
