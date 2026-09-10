@@ -41,7 +41,7 @@ runs:
         uses: actions/upload-artifact@v7
         with:
           archive: false
-          path: ${{ steps.expand.outputs.artifact[1]
+          path: ${{ steps.expand.outputs.artifact[1] }}
           overwrite: ${{ inputs.overwrite }}
 
       - name: Upload artifact (2/${{ steps.expand.outputs.artifacts_length }})
@@ -49,7 +49,7 @@ runs:
         uses: actions/upload-artifact@v7
         with:
           archive: false
-          path: ${{ steps.expand.outputs.artifact[2]
+          path: ${{ steps.expand.outputs.artifact[2] }}
           overwrite: ${{ inputs.overwrite }}
 
       - name: Upload artifact (3/${{ steps.expand.outputs.artifacts_length }})
@@ -57,7 +57,7 @@ runs:
         uses: actions/upload-artifact@v7
         with:
           archive: false
-          path: ${{ steps.expand.outputs.artifact[3]
+          path: ${{ steps.expand.outputs.artifact[3] }}
           overwrite: ${{ inputs.overwrite }}
 
       - name: Upload artifact (4/${{ steps.expand.outputs.artifacts_length }})
@@ -65,7 +65,7 @@ runs:
         uses: actions/upload-artifact@v7
         with:
           archive: false
-          path: ${{ steps.expand.outputs.artifact[4]
+          path: ${{ steps.expand.outputs.artifact[4] }}
           overwrite: ${{ inputs.overwrite }}
 
       - name: Upload artifact (5/${{ steps.expand.outputs.artifacts_length }})
@@ -73,7 +73,7 @@ runs:
         uses: actions/upload-artifact@v7
         with:
           archive: false
-          path: ${{ steps.expand.outputs.artifact[5]
+          path: ${{ steps.expand.outputs.artifact[5] }}
           overwrite: ${{ inputs.overwrite }}
 
       - name: Upload artifact (6/${{ steps.expand.outputs.artifacts_length }})
@@ -81,7 +81,7 @@ runs:
         uses: actions/upload-artifact@v7
         with:
           archive: false
-          path: ${{ steps.expand.outputs.artifact[6]
+          path: ${{ steps.expand.outputs.artifact[6] }}
           overwrite: ${{ inputs.overwrite }}
 
       - name: Upload artifact (7/${{ steps.expand.outputs.artifacts_length }})
@@ -89,7 +89,7 @@ runs:
         uses: actions/upload-artifact@v7
         with:
           archive: false
-          path: ${{ steps.expand.outputs.artifact[7]
+          path: ${{ steps.expand.outputs.artifact[7] }}
           overwrite: ${{ inputs.overwrite }}
 
       - name: Upload artifact (8/${{ steps.expand.outputs.artifacts_length }})
@@ -97,5 +97,5 @@ runs:
         uses: actions/upload-artifact@v7
         with:
           archive: false
-          path: ${{ steps.expand.outputs.artifact[8]
+          path: ${{ steps.expand.outputs.artifact[8] }}
           overwrite: ${{ inputs.overwrite }}
