@@ -13,6 +13,10 @@ def asset_parse:
     "kobo": "Kobo",
     "kobov5": "Kobo v5",
     # Linux
+    "appimage-aarch64": "Linux ARM64",
+    "appimage-x86_64": "Linux x86_64",
+    "debian-amd64": "Linux x86_64",
+    "debian-arm64": "Linux ARM64",
     "linux-aarch64": "Linux ARM64",
     "linux-amd64": "Linux x86_64",
     "linux-arm64": "Linux ARM64",

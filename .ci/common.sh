@@ -6,12 +6,11 @@ set -o pipefail
 # Avoid jumbled stderr / stdout outputs…
 # exec 2>&1
 
-declare -r ANSI_DIM="\033[2m"
-declare -r ANSI_RED="\033[31;1m"
-declare -r ANSI_GREEN="\033[32;1m"
-# shellcheck disable=SC2034
-declare -r ANSI_BLUE="\033[34;1m"
-declare -r ANSI_RESET="\033[0m"
+declare -r ANSI_DIM=$'\033[2m'
+declare -r ANSI_RED=$'\033[31;1m'
+declare -r ANSI_GREEN=$'\033[32;1m'
+declare -r ANSI_BLUE=$'\033[34;1m'
+declare -r ANSI_RESET=$'\033[0m'
 
 DRY_RUN="${DRY_RUN:-}"
 
@@ -24,7 +23,7 @@ quote() {
 }
 
 err() {
-    echo -e "${ANSI_RED}$*${ANSI_RESET}" 1>&2
+    printf '%s\n' "${ANSI_RED}$*${ANSI_RESET}" 1>&2
 }
 
 die() {
@@ -34,7 +33,7 @@ die() {
 
 run() {
     local code
-    echo -e "::group::${ANSI_GREEN}$(quote "$@")${ANSI_RESET}" 1>&2
+    printf '%s\n' "${GITHUB_ACTIONS:+::group::}${ANSI_GREEN}$(quote "$@")${ANSI_RESET}" 1>&2
     if [[ -n "${DRY_RUN}" ]]; then
         code=0
     else
@@ -43,7 +42,7 @@ run() {
     if [[ "${code}" != 0 ]]; then
         err "Error: exit code ${code}"
     fi
-    echo "::endgroup::" 1>&2
+    [[ -z "${GITHUB_ACTIONS}" ]] || printf '::endgroup::\n' 1>&2
     return "${code}"
 }
 
@@ -76,10 +75,10 @@ ONEXIT=()
 onexit() {
     ONEXIT+=("$@")
     local handler
-    handler="echo -e '${ANSI_DIM}EXIT trap${ANSI_RESET}'$(printf " && %s" "${ONEXIT[@]}")"
-    echo -e "${ANSI_DIM}trap ${handler@Q} EXIT${ANSI_RESET}"
+    handler="$(printf "true && %s" "${ONEXIT[@]}")"
+    printf '%s\n' "${ANSI_DIM}trap ${handler@Q} EXIT${ANSI_RESET}"
     # shellcheck disable=SC2064
-    trap "${handler}" EXIT
+    trap "printf '%s\n' '${ANSI_DIM}EXIT trap${ANSI_RESET}'; ${handler}" EXIT
 }
 
 # Docker helpers. {{{
@@ -94,7 +93,7 @@ container_start() {
 
 container_exec() {
     local code
-    echo -e "::group::docker exec … ${ANSI_GREEN}$(quote "$@")${ANSI_RESET}" 1>&2
+    printf '%s\n' "${GITHUB_ACTIONS:+::group::}${ANSI_GREEN}$(quote "$@")${ANSI_RESET}${ANSI_DIM} [docker]${ANSI_RESET}" 1>&2
     if [[ -n "${DRY_RUN}" ]]; then
         code=0
     else
@@ -103,11 +102,11 @@ container_exec() {
     if [[ "${code}" != 0 ]]; then
         err "Error: exit code ${code}"
     fi
-    echo "::endgroup::"
+    [[ -z "${GITHUB_ACTIONS}" ]] || printf '::endgroup::\n' 1>&2
     return "${code}" 1>&2
 }
 
 # }}}
 
-echo -e "${ANSI_BLUE}$(quote "$0" "$@")${ANSI_RESET}" 1>&2
+printf '%s\n' "${ANSI_BLUE}$(quote "$0" "$@")${ANSI_RESET}" 1>&2
 trap 'err "Error: exit code $?"' ERR

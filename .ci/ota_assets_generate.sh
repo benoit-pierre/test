@@ -9,73 +9,93 @@ assets_dir="$1"
 channel="$2"
 shift 2
 
-kotasync_make() {
-    local txz="$1"
-    shift 1
-    local new="${txz%.tar.xz}.kotasync"
-    local old="ota/${txz%-v[0-9]*}-latest-nightly.kotasync"
-    local cmd=(kotasync make)
-    if [[ -e "${old}" ]]; then
-        cmd+=(--reorder "${old}")
+latest_make() {
+    [[ $# -eq 4 ]] || return
+    local mode="$1" file="$2" latest="$3" latest_nightly="$4"
+    case "${mode}" in
+        copy) run cp "${file}" "${latest}" ;;
+        link) run sh -c "echo $(quote "${file}") >$(quote "${latest}")" ;;
+        *) return 1 ;;
+    esac
+    if [[ "${latest}" != "${latest_nightly}" ]]; then
+        run cp "${latest}" "${latest_nightly}"
     fi
-    cmd+=("${txz}" "${new}")
+}
+
+kotasync_make() {
+    [[ $# -eq 4 ]] || return
+    local txz="$1" kotasync="$2" latest="$3" latest_nightly="$4"
+    local cmd=(kotasync make)
+    if [[ -e "ota/${latest_nightly}" ]]; then
+        cmd+=(--reorder "ota/${latest_nightly}")
+    fi
+    cmd+=("${txz}" "${kotasync}")
     container_exec "${cmd[@]}"
+    latest_make copy "${kotasync}" "${latest}" "${latest_nightly}"
 }
 
 zsync_make() {
-    local tgz="$1"
-    shift 1
-    local new="${tgz%.targz}.zsync"
-    local cmd=(zsyncmake "${tgz}" -C -u "${tgz##*/}" -o "${new}")
+    [[ $# -eq 4 ]] || return
+    local tgz="$1" zsync="$2" latest="$3" latest_nightly="$4"
+    local cmd=(zsyncmake "${tgz}" -C -u "${tgz##*/}" -o "${zsync}")
     container_exec "${cmd[@]}"
-}
-
-latest_make() {
-    local l="${2%-v[0-9]*}-latest-${channel}"
-    case "$1" in
-        link)
-            echo -e "${ANSI_GREEN}echo $(quote "${2}") >$(quote "${l}")${ANSI_RESET}" 1>&2
-            [[ -n "${DRY_RUN}" ]] || echo "$2" >"${l}"
-            ;;
-        copy)
-            l+=".${2##*.}"
-            run cp "${2}" "${l}"
-            ;;
-    esac
-    if [[ "${channel}" == 'stable' ]]; then
-        run cp "${l}" "${l/-latest-stable/-latest-nightly}"
-    fi
+    latest_make copy "${zsync}" "${latest}" "${latest_nightly}"
 }
 
 # Fetch latest nightly kotasync files.
-if out="$(gh release view --json assets --jq '.assets[].name | select(test("^koreader-.*-latest-nightly\\.kotasync$"))' ota)" && [[ -n "${out}" ]]; then
+if out="$(run gh release view --json assets --jq '.assets[].name | select(test("^koreader-.*-latest-nightly\\.kotasync$"))' ota)" && [[ -n "${out}" ]]; then
     run gh release download --dir="${assets_dir}/ota" --pattern='koreader-*-latest-nightly.kotasync' ota
     # shellcheck disable=SC2016
     onexit 'run rm -rf "${assets_dir}/ota"'
 fi
 
+# Parse initial list of assets.
+shopt -s extglob
+initial_assets="$("${CI_DIR}/assets_parse_to_sh.sh" "${assets_dir}"/!(ota))"
+shopt -u extglob
+
+printf '%s\n' "${ANSI_DIM}pushd $(quote "${assets_dir}")${ANSI_RESET}" 1>&2
+pushd "${assets_dir}" >/dev/null || exit
+
 # Start helper container.
 container_start
 
-# Generate kotasync / zsync individual files.
-for a in "${assets_dir}"/koreader-{cervantes,kindle*,kobo*,pocketbook*,remarkable*,sony-prstux*}.{tar.xz,targz}; do
-    [[ -e "${a}" ]] || continue
-    # Generate.
-    case "${a}" in
-        *.tar.xz) t='kotasync' ;;
-        *.targz) t='zsync' ;;
-    esac
-    "${t}_make" "${a}"
-done
+while read -r line; do
+    declare -A "asset=(${line})"
+    asset[file]="${asset[file]##*/}"
 
-# Generate latest stable / nightly files.
-for a in "${assets_dir}"/*; do
-    [[ -e "${a}" ]] || continue
-    case "${a}" in
-        *-latest-*) ;; # Ignore those to make testing locally easier.
-        *.apk | *.AppImage) latest_make link "${a}" ;;
-        *.kotasync | *.zsync) latest_make copy "${a}" ;;
+    printf '%s\n' "${ANSI_BLUE}${asset[platform_name]}: ${asset[file]}${ANSI_RESET}"
+
+    latest_files=("koreader-${asset[platform]}"-latest-{"${channel}",nightly})
+
+    case "${asset[platform]}" in
+
+        android-*)
+            case "${asset[extension]}" in
+                apk) latest_make link "${asset[file]}" "${latest_files[@]}" ;;
+            esac
+            ;;
+
+        cervantes | kindle* | kobo* | pocketbook* | remarkable* | sony-prstux)
+            case "${asset[extension]}" in
+                tar.xz) kotasync_make "${asset[file]}" "${asset[file]%.tar.xz}.kotasync" "${latest_files[@]/%/.kotasync}" ;;
+                targz) zsync_make "${asset[file]}" "${asset[file]%.targz}.zsync" "${latest_files[@]/%/.zsync}" ;;
+            esac
+            ;;
+
+        linux-*)
+            case "${asset[extension]}" in
+                AppImage) latest_make link "${asset[file]}" "${latest_files[@]/-linux-/-appimage-}" ;;
+                deb) latest_make link "${asset[file]}" "${latest_files[@]/-linux-/-debian-}" ;;
+                tar.xz) latest_make link "${asset[file]}" "${latest_files[@]}" ;;
+            esac
+            ;;
+
     esac
-done
+
+done <<<"${initial_assets}"
+
+printf '%s\n' "${ANSI_DIM}popd${ANSI_RESET}" 1>&2
+popd >/dev/null || exit
 
 # vim: sw=4
