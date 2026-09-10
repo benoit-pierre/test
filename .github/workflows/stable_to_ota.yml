@@ -43,7 +43,6 @@ jobs:
           filter: tree:0
           show-progress: false
           sparse-checkout: .ci
-          token: ${{ secrets.GH_TOKEN }}
 
       - name: Upload
         env:
