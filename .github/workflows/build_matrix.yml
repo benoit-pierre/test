@@ -55,45 +55,12 @@ jobs:
       # Generate & upload artifacts. {{{
 
       - name: Generate artifacts
-        run: |
-          set -x
-          version="$(git describe --match='v[0-9]*')"
-          echo "${version}" >version.txt
-          artifacts=()
-          case '${{ matrix.id }}' in
-            android-arm) artifacts+=(koreader-android-arm-${version}.apk) ;;
-            android-arm64) artifacts+=(koreader-android-arm64-${version}.apk) ;;
-            linux-x86_64)
-              artifacts+=("koreader-${version}-x86_64.AppImage")
-              if [[ ${{ inputs.all_artifacts }} = true ]]; then
-                artifacts+=("koreader-linux-x86_64-${version}.tar.xz" "koreader_${version#v}-1_amd64.deb")
-              fi
-              ;;
-            cervantes | kindle* | kobo* | pocketbook* | remarkable*)
-              artifacts+=("koreader-${{ matrix.id }}-${version}.tar.xz")
-              if [[ ${{ inputs.all_artifacts }} = true ]]; then
-                artifacts+=("koreader-${{ matrix.id }}-${version}.targz" "koreader-${{ matrix.id }}-${version}.zip")
-              fi
-              ;;
-            macos-arm64) artifacts+=("koreader-macos-${{ matrix.macosx_deployment_target }}-arm64-${version}.7z") ;;
-            macos-x86_64) artifacts+=("koreader-macos-${{ matrix.macosx_deployment_target }}-x86_64-${version}.7z") ;;
-          esac
-          for a in "${artifacts[@]}"; do
-            case "${a}" in
-              *.7z) 7z a "${a}" version.txt ;;
-              *.apk) cp fake.apk "${a}" ;;
-              *.AppImage) cp /usr/bin/true "${a}" ;;
-              *.deb) ar q "${a}" version.txt ;;
-              *.targz) tar czf "${a}" version.txt ;;
-              *.tar.xz)
-                a="${a%.xz}"
-                tar cf "${a}" --record-size=512 version.txt
-                size="$(stat -c %s "${a}")"
-                xz -9 --block-list=$((size-512*2)),0 "$a"
-                ;;
-              *.zip) zip a "${a}" version.txt ;;
-            esac
-          done
+        if: matrix.target
+        run: >
+          ./.ci/artifact_generate.sh
+          '${{ matrix.id }}'
+          '${{ inputs.all_artifacts }}'
+          '${{ matrix.macosx_deployment_target }}'
 
       - name: Upload artifacts
         uses: $/.github/actions/upload-artifacts
