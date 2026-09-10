@@ -30,5 +30,14 @@ def match(filters):
     | .check_ffi_cdecls=(.check_ffi_cdecls // true)
   ]
 )) #| debug
-| map(.value = (.value | tojson))
+# Split into 2 groups: emulator and platform jobs.
+| group_by(.key == "emulator")
+| debug
+| map({
+  "key": (if .[0].key == "emulator" then "emulator" else "platform" end),
+  "value": ([.[].value] | flatten),
+})
+# Sort job list and encode it to json.
+| map(.value = (.value | sort_by(.id) | tojson))
+# Back to a mapping of [emulator|platform] => jobs.
 | from_entries
