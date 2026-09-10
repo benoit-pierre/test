@@ -95,6 +95,8 @@ def asset_parse:
       | .base_version = "stable"
       | .sort_version = [666]
       | .extension = "metadata"
+      | .ota = true
+      | .stable = true
     )
     // error("unsupported asset: " + .)
   ) #| debug
