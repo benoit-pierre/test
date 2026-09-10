@@ -57,7 +57,7 @@ jobs:
       - name: Generate artifacts
         if: matrix.target
         run: >
-          ./.ci/artifact_generate.sh
+          ./.ci/artifacts_generate.sh
           '${{ matrix.id }}'
           '${{ inputs.all_artifacts }}'
           '${{ matrix.macosx_deployment_target }}'
