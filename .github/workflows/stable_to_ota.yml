@@ -1,7 +1,7 @@
 name: Stable to OTA
 
 permissions:
-  contents: read
+  contents: write
 
 on:
   release:
@@ -22,15 +22,9 @@ env:
 jobs:
 
   upload_to_ota:
-
     name: Upload to OTA
-
-    environment: release
-
     runs-on: ubuntu-latest
-
     steps:
-
       - name: Checkout
         uses: actions/checkout@v7
         with:
@@ -43,8 +37,5 @@ jobs:
           filter: tree:0
           show-progress: false
           sparse-checkout: .ci
-
       - name: Upload
-        env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: ./.ci/stable_upload_to_ota.sh assets '${{ inputs.tag_name || github.event.release.tag_name }}'

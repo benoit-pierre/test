@@ -39,8 +39,6 @@ jobs:
           sparse-checkout: .ci
       - name: Check staleness
         id: check
-        env:
-          GH_TOKEN: ${{ github.token }}
         run: ./.ci/release_staleness_check.sh
     outputs:
       stale: ${{ steps.check.outputs.stale }}
@@ -93,7 +91,8 @@ jobs:
   release:
     name: Release
     needs: sign_android_apks
-    environment: release
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -103,7 +102,6 @@ jobs:
           fetch-tags: true
           show-progress: false
           sparse-checkout: .ci
-          token: ${{ secrets.GH_TOKEN }}
       - name: Download artifacts
         uses: *ACTION_DOWNLOAD_ARTIFACT
         with:
@@ -111,6 +109,4 @@ jobs:
           path: assets
           skip-decompress: true
       - name: Release
-        env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: ./.ci/release_create.sh assets
