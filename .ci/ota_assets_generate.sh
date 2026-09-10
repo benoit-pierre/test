@@ -26,8 +26,8 @@ kotasync_make() {
     [[ $# -eq 4 ]] || return
     local txz="$1" kotasync="$2" latest="$3" latest_nightly="$4"
     local cmd=(kotasync make)
-    if [[ -e "ota/${latest_nightly}" ]]; then
-        cmd+=(--reorder "ota/${latest_nightly}")
+    if [[ -e ".ota/${latest_nightly}" ]]; then
+        cmd+=(--reorder ".ota/${latest_nightly}")
     fi
     cmd+=("${txz}" "${kotasync}")
     container_exec "${cmd[@]}"
@@ -44,15 +44,13 @@ zsync_make() {
 
 # Fetch latest nightly kotasync files.
 if out="$(run gh release view --json assets --jq '.assets[].name | select(test("^koreader-.*-latest-nightly\\.kotasync$"))' ota)" && [[ -n "${out}" ]]; then
-    run gh release download --dir="${assets_dir}/ota" --pattern='koreader-*-latest-nightly.kotasync' ota
+    run gh release download --dir="${assets_dir}/.ota" --pattern='koreader-*-latest-nightly.kotasync' ota
     # shellcheck disable=SC2016
-    onexit 'run rm -rf "${assets_dir}/ota"'
+    onexit 'run rm -rf "${assets_dir}/.ota"'
 fi
 
 # Parse initial list of assets.
-shopt -s extglob
-initial_assets="$("${CI_DIR}/assets_parse_to_sh.sh" "${assets_dir}"/!(ota))"
-shopt -u extglob
+initial_assets="$("${CI_DIR}/assets_parse_to_sh.sh" "${assets_dir}"/*)"
 
 printf '%s\n' "${ANSI_DIM}pushd $(quote "${assets_dir}")${ANSI_RESET}" 1>&2
 pushd "${assets_dir}" >/dev/null || exit
