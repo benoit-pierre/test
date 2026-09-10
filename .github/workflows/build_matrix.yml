@@ -55,7 +55,7 @@ jobs:
       # Generate & upload artifacts. {{{
 
       - name: Generate artifacts
-        if: matrix.target
+        if: matrix.artifact
         run: >
           ./.ci/artifacts_generate.sh
           '${{ matrix.id }}'
@@ -63,6 +63,7 @@ jobs:
           '${{ matrix.macosx_deployment_target }}'
 
       - name: Upload artifacts
+        if: matrix.artifact
         uses: $/.github/actions/upload-artifacts
         with:
           patterns: |
