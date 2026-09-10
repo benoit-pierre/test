@@ -14,13 +14,16 @@ def asset_parse:
     "kobov5": "Kobo v5",
     # Linux
     "appimage-aarch64": "Linux ARM64",
+    "appimage-armhf": "Linux ARMhf",
     "appimage-x86_64": "Linux x86_64",
     "debian-amd64": "Linux x86_64",
     "debian-arm64": "Linux ARM64",
+    "debian-armhf": "Linux ARMhf",
     "linux-aarch64": "Linux ARM64",
     "linux-amd64": "Linux x86_64",
+    "linux-arm": "Linux ARMhf",
     "linux-arm64": "Linux ARM64",
-    "linux-armhf": "Linux ARMhf",
+    "linux-armv7l": "Linux ARMhf",
     "linux-x86_64": "Linux x86_64",
     # macOS
     "macos-10.15-x86_64": "macOS x86_64",
@@ -32,6 +35,21 @@ def asset_parse:
     "remarkable": "reMarkable",
     "remarkable-aarch64": "reMarkable Pro",
   } as $platform_name
+  | {
+    # Android
+    "android-arm": "apk link",
+    "android-arm64": "apk link",
+    # Linux
+    "appimage-aarch64": "AppImage link",
+    "appimage-armhf": "AppImage link",
+    "appimage-x86_64": "AppImage link",
+    "debian-amd64": "deb link",
+    "debian-arm64": "deb link",
+    "debian-armhf": "deb link",
+    "linux-aarch64": "tar.xz link",
+    "linux-arm": "tar.xz link",
+    "linux-x86_64": "tar.xz link",
+  } as $link_type
   | "(?<platform>.+)" as $platform_rx
   | "(?<version>(?<base_version>[0-9]+(\\.[0-9]+)*)(-(?<commit_number>[0-9]+)-g(?<commit_hash>[a-f0-9]+))?(_[0-9]{4}-[0-9]{2}-[0-9]{2})?)" as $version_rx
   | "\\.(?<extension>(7z|apk|AppImage|deb|kotasync|targz|tar\\.xz|zip|zsync))$" as $extension_rx
@@ -58,7 +76,7 @@ def asset_parse:
       capture("/?koreader-" + $platform_rx + "-latest-(?<version>nightly|stable)(" + $extension_rx + ")?")
       | .base_version = .version
       | .sort_version = [666]
-      | .extension //= "link"
+      | .extension //= ($link_type[.platform] // "link")
       | .ota = true
       | .stable = .base_version == "stable"
     )
