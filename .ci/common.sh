@@ -75,7 +75,7 @@ ONEXIT=()
 onexit() {
     ONEXIT+=("$@")
     local handler
-    handler="$(printf "true && %s" "${ONEXIT[@]}")"
+    handler="true$(printf " && %s" "${ONEXIT[@]}")"
     printf '%s\n' "${ANSI_DIM}trap ${handler@Q} EXIT${ANSI_RESET}"
     # shellcheck disable=SC2064
     trap "printf '%s\n' '${ANSI_DIM}EXIT trap${ANSI_RESET}'; ${handler}" EXIT
