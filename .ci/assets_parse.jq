@@ -6,6 +6,8 @@ def asset_parse:
     "android-arm64": "Android ARM64",
     "android-x86": "Android x86",
     "android-x86_64": "Android x86_64",
+    # Cervantes
+    "cervantes": "Cervantes",
     # Kindle
     "kindle": "Kindle",
     "kindle-legacy": "Kindle Legacy",
