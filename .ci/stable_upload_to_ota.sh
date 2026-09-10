@@ -4,7 +4,7 @@ CI_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=/dev/null
 source "${CI_DIR}/common.sh"
 
-[[ $# -eq 2 ]] || "2 arguments expected, got $#"
+[[ $# -eq 2 ]] || die "2 arguments expected, got $#"
 assets_dir="$1"
 release_tag="$2"
 shift 1

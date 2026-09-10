@@ -30,7 +30,7 @@ def asset_parse:
   } as $platform_name
   | "(?<platform>.+)" as $platform_rx
   | "(?<version>(?<base_version>[0-9]+(\\.[0-9]+)*)(-(?<commit_number>[0-9]+)-g(?<commit_hash>[a-f0-9]+))?(_[0-9]{4}-[0-9]{2}-[0-9]{2})?)" as $version_rx
-  | "\\.(?<extension>[^.]+(\\.[^.]+)*)$" as $extension_rx
+  | "\\.(?<extension>(7z|apk|AppImage|deb|kotasync|targz|tar\\.xz|zip|zsync))$" as $extension_rx
   | $file | (
     # koreader-linux-x86_64-v2023.06.1.tar.xz
     # koreader-ubuntu-touch-arm-v2015.11-640-g17e9a8e_2018-03-09.targz

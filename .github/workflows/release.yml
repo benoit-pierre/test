@@ -31,7 +31,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v7
+        uses: *ACTION_CHECKOUT actions/checkout@v7
         with:
           clean: false
           fetch-tags: true
@@ -56,14 +56,48 @@ jobs:
       all_artifacts: true
       test: false
 
+  sign_android_apks:
+    name: Sign Android APKs
+    needs: build
+    environment: android
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: &ACTION_CHECKOUT
+        with:
+          clean: false
+          show-progress: false
+          sparse-checkout: .ci
+      - name: Download APKs
+        uses: *ACTION_DOWNLOAD_ARTIFACT actions/download-artifact@v8
+        with:
+          merge-multiple: true
+          path: assets
+          pattern: *.apk
+          skip-decompress: true
+      - name: Sign APKs
+        if: hashFiles('assets/*.apk')
+        env:
+          APK_SIGN_KEY_ALIAS: ${{ vars.APK_SIGN_KEY_ALIAS }}
+          APK_SIGN_KEY_PASS: ${{ secrets.APK_SIGN_KEY_PASS }}
+          APK_SIGN_STORE_BASE64: ${{ secrets.APK_SIGN_STORE_BASE64 }}
+          APK_SIGN_STORE_PASS: ${{ secrets.APK_SIGN_STORE_PASS }}
+        run: ./.ci/android_apks_sign.sh assets
+      - name: Re-upload APKs
+        if: hashFiles('assets/*.apk')
+        uses: $/.github/actions/upload-artifacts
+        with:
+          overwrite: true
+          patterns: assets/*.apk
+
   release:
     name: Release
-    needs: build
+    needs: sign_android_apks
     environment: release
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v7
+        uses: &ACTION_CHECKOUT
         with:
           clean: false
           fetch-tags: true
@@ -71,7 +105,7 @@ jobs:
           sparse-checkout: .ci
           token: ${{ secrets.GH_TOKEN }}
       - name: Download artifacts
-        uses: actions/download-artifact@v8
+        uses: &ACTION_DOWNLOAD_ARTIFACT
         with:
           merge-multiple: true
           path: assets
@@ -79,8 +113,4 @@ jobs:
       - name: Release
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
-          APK_SIGN_KEY_ALIAS: ${{ vars.APK_SIGN_KEY_ALIAS }}
-          APK_SIGN_KEY_PASS: ${{ secrets.APK_SIGN_KEY_PASS }}
-          APK_SIGN_STORE_BASE64: ${{ secrets.APK_SIGN_STORE_BASE64 }}
-          APK_SIGN_STORE_PASS: ${{ secrets.APK_SIGN_STORE_PASS }}
         run: ./.ci/release_create.sh assets

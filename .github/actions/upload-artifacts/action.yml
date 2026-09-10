@@ -1,0 +1,101 @@
+# Workaround for uploading multiple unarchived artifacts until
+# https://github.com/actions/upload-artifact#766 is resolved.
+
+name: Upload multiple (unarchived) artifacts
+
+inputs:
+  patterns:
+    description: Artifact pattern(s)
+    required: true
+  overwrite:
+    description: Overwrite existing artifacts
+    required: false
+    default: false
+
+runs:
+
+  using: "composite"
+
+  steps:
+
+      - name: Expand patterns
+        id: list
+        shell: bash
+        run: |
+          set -x
+          set --
+          for m in ${{ inputs.patterns }}; do
+            if [[ -e "${m}" ]]; then
+              set -- "$@" "${m}"
+            fi
+          done
+          if [[ $# -gt 8 ]]; then
+            echo "too many artifacts (> 8): $#" 1>&2
+            exit 1
+          fi
+          artifacts="$(jq --compact-output --null-input '$ARGS.positional' --args "$@")"
+          printf '%s=%s\n' artifacts "${artifacts}" artifacts_length "$#"
+
+      - name: Upload artifact (1/${{ steps.expand.outputs.artifacts_length }})
+        if: steps.expand.outputs.artifacts[1]
+        uses: actions/upload-artifact@v7
+        with:
+          archive: false
+          path: ${{ steps.expand.outputs.artifact[1]
+          overwrite: ${{ inputs.overwrite }}
+
+      - name: Upload artifact (2/${{ steps.expand.outputs.artifacts_length }})
+        if: steps.expand.outputs.artifacts[2]
+        uses: actions/upload-artifact@v7
+        with:
+          archive: false
+          path: ${{ steps.expand.outputs.artifact[2]
+          overwrite: ${{ inputs.overwrite }}
+
+      - name: Upload artifact (3/${{ steps.expand.outputs.artifacts_length }})
+        if: steps.expand.outputs.artifacts[3]
+        uses: actions/upload-artifact@v7
+        with:
+          archive: false
+          path: ${{ steps.expand.outputs.artifact[3]
+          overwrite: ${{ inputs.overwrite }}
+
+      - name: Upload artifact (4/${{ steps.expand.outputs.artifacts_length }})
+        if: steps.expand.outputs.artifacts[4]
+        uses: actions/upload-artifact@v7
+        with:
+          archive: false
+          path: ${{ steps.expand.outputs.artifact[4]
+          overwrite: ${{ inputs.overwrite }}
+
+      - name: Upload artifact (5/${{ steps.expand.outputs.artifacts_length }})
+        if: steps.expand.outputs.artifacts[5]
+        uses: actions/upload-artifact@v7
+        with:
+          archive: false
+          path: ${{ steps.expand.outputs.artifact[5]
+          overwrite: ${{ inputs.overwrite }}
+
+      - name: Upload artifact (6/${{ steps.expand.outputs.artifacts_length }})
+        if: steps.expand.outputs.artifacts[6]
+        uses: actions/upload-artifact@v7
+        with:
+          archive: false
+          path: ${{ steps.expand.outputs.artifact[6]
+          overwrite: ${{ inputs.overwrite }}
+
+      - name: Upload artifact (7/${{ steps.expand.outputs.artifacts_length }})
+        if: steps.expand.outputs.artifacts[7]
+        uses: actions/upload-artifact@v7
+        with:
+          archive: false
+          path: ${{ steps.expand.outputs.artifact[7]
+          overwrite: ${{ inputs.overwrite }}
+
+      - name: Upload artifact (8/${{ steps.expand.outputs.artifacts_length }})
+        if: steps.expand.outputs.artifacts[8]
+        uses: actions/upload-artifact@v7
+        with:
+          archive: false
+          path: ${{ steps.expand.outputs.artifact[8]
+          overwrite: ${{ inputs.overwrite }}

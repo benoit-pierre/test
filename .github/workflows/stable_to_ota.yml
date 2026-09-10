@@ -37,9 +37,9 @@ jobs:
           clean: false
           show-progress: false
           sparse-checkout: .ci
+          token: ${{ secrets.GH_TOKEN }}
 
       - name: Upload
         env:
-          GH_REPO: ${{ inputs.gh_repo }}
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: ./.ci/stable_upload_to_ota.sh assets '${{ inputs.tag_name || github.event.release.tag_name }}'

@@ -52,7 +52,7 @@ jobs:
 
       # }}}
 
-      # Generate artifacts. {{{
+      # Generate & upload artifacts. {{{
 
       - name: Generate artifacts
         run: |
@@ -93,61 +93,17 @@ jobs:
             esac
           done
 
-      # }}}
-
-      # Upload artifacts. {{{
-
-      # Yes, we need to do this for each possible extension until
-      # https://github.com/actions/upload-artifact#766 is resolved.
-
-      - name: Upload artifact (7z)
-        if: hashFiles('koreader-*.7z')
-        uses: &UPLOAD_ARTIFACT actions/upload-artifact@v7
+      - name: Upload artifacts
+        uses: $/.github/actions/upload-artifacts
         with:
-          archive: false
-          path: koreader-*.7z
-
-      - name: Upload artifact (apk)
-        if: hashFiles('koreader-*.apk')
-        uses: *UPLOAD_ARTIFACT
-        with:
-          archive: false
-          path: koreader-*.apk
-
-      - name: Upload artifact (appimage)
-        if: hashFiles('koreader-*.AppImage')
-        uses: *UPLOAD_ARTIFACT
-        with:
-          archive: false
-          path: koreader-*.AppImage
-
-      - name: Upload artifact (deb)
-        if: hashFiles('koreader_*.deb')
-        uses: *UPLOAD_ARTIFACT
-        with:
-          archive: false
-          path: koreader_*.deb
-
-      - name: Upload artifact (tar.xz)
-        if: hashFiles('koreader-*.tar.xz')
-        uses: *UPLOAD_ARTIFACT
-        with:
-          archive: false
-          path: koreader-*.tar.xz
-
-      - name: Upload artifact (targz)
-        if: hashFiles('koreader-*.targz')
-        uses: *UPLOAD_ARTIFACT
-        with:
-          archive: false
-          path: koreader-*.targz
-
-      - name: Upload artifact (zip)
-        if: hashFiles('koreader-*.zip')
-        uses: *UPLOAD_ARTIFACT
-        with:
-          archive: false
-          path: koreader-*.zip
+          patterns: |
+            koreader-*.7z
+            koreader-*.apk
+            koreader-*.AppImage
+            koreader-*.tar.xz
+            koreader-*.targz
+            koreader-*.zip
+            koreader_*.deb
 
       # }}}
 

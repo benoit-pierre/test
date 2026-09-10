@@ -4,7 +4,7 @@ CI_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=/dev/null
 source "${CI_DIR}/common.sh"
 
-[[ $# -ge 1 ]] || "at least one argument expected, got $#"
+[[ $# -ge 1 ]] || die "at least one argument expected, got $#"
 
 jobs_file="${0%/*}/build_jobs.yml"
 jq_script="${0%/*}/build_matrix_generate.jq"

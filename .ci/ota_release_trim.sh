@@ -4,7 +4,7 @@ CI_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=/dev/null
 source "${CI_DIR}/common.sh"
 
-[[ $# -eq 0 ]] || "no arguments expected, got $#"
+[[ $# -eq 0 ]] || die "no arguments expected, got $#"
 
 out="$(gh release view ota --json 'assets' --template '{{ range .assets }}{{ .name }}{{ "\n" }}{{ end }}')"
 readarray -t assets <<<"${out}"
