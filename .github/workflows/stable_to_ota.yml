@@ -35,6 +35,12 @@ jobs:
         uses: actions/checkout@v7
         with:
           clean: false
+          # NOTE: we need a non-shallow clone for determining commit
+          # count (`git rev-list --count $version`) when generating
+          # F-Droid's metadata (`koreader-android-fdroid-latest`).
+          fetch-depth: 0
+          fetch-tags: true
+          filter: tree:0
           show-progress: false
           sparse-checkout: .ci
           token: ${{ secrets.GH_TOKEN }}

@@ -73,6 +73,11 @@ while read -r line; do
             case "${asset[extension]}" in
                 apk) latest_make link "${asset[file]}" "${latest_files[@]}" ;;
             esac
+            echo "${line}"
+            if [[ "${asset[stable]}" == 'true' ]] && [[ "${asset[commit_hash]}" ]]; then
+                commit_count="$(git rev-list --count "${asset[base_version]}")"
+                run sh -c "printf '%s\n%u\n' '${asset[version]}' '${commit_count}' >koreader-android-fdroid-latest"
+            fi
             ;;
 
         cervantes | kindle* | kobo* | pocketbook* | remarkable* | sony-prstux)
