@@ -2,8 +2,10 @@ def asset_parse:
   . as $file
   | {
     # Android
+    "android": "Android ARM",
     "android-arm": "Android ARM",
     "android-arm64": "Android ARM64",
+    "android-fdroid": "Android F-Droid",
     "android-x86": "Android x86",
     "android-x86_64": "Android x86_64",
     # Cervantes
@@ -27,6 +29,7 @@ def asset_parse:
     "linux-amd64": "Linux x86_64",
     "linux-arm": "Linux ARMhf",
     "linux-arm64": "Linux ARM64",
+    "linux-armhf": "Linux ARMhf",
     "linux-armv7l": "Linux ARMhf",
     "linux-x86_64": "Linux x86_64",
     # macOS
@@ -78,18 +81,26 @@ def asset_parse:
     # koreader-kindlepw2-latest-nightly.kotasync
     # koreader-kindlepw2-latest-stable.zsync
     // (
-      capture("/?koreader-" + $platform_rx + "-latest-(?<version>nightly|stable)(" + $extension_rx + ")?")
+      capture("/?koreader-" + $platform_rx + "-latest-(?<version>nightly|stable)(" + $extension_rx + "|$)")
       | .base_version = .version
       | .sort_version = [666]
       | .extension //= ($link_type[.platform] // "link")
       | .ota = true
       | .stable = .base_version == "stable"
     )
+    # koreader-android-fdroid-latest
+    // (
+      capture("/?koreader-android-fdroid-latest$")
+      | .platform = "android-fdroid"
+      | .base_version = "stable"
+      | .sort_version = [666]
+      | .extension = "metadata"
+    )
     // error("unsupported asset: " + .)
   ) #| debug
   # Finalize.
   | .file = $file
-  | .platform_name = ($platform_name[.platform] // error("invalid platform: " + .platform))
+  | .platform_name = ($platform_name[.platform] // error("invalid platform: " + .platform + ", " + (. | tostring)))
   | .sort_version = (.sort_version // [
     (.base_version | split(".") | map(tonumber)),
     (.commit_number // 0 | tonumber)

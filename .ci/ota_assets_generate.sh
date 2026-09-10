@@ -68,6 +68,7 @@ while read -r line; do
 
     case "${asset[platform]}" in
 
+        android-arm) latest_files=("${latest_files[@]/-android-arm-/-android-}") ;&
         android-*)
             case "${asset[extension]}" in
                 apk) latest_make link "${asset[file]}" "${latest_files[@]}" ;;
