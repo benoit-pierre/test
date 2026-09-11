@@ -6,23 +6,35 @@ permissions:
 on:
   workflow_call:
     inputs: &INPUTS
+      # Mandatory.
       jobs:
         description: 'Run the specified list of jobs'
-        default: 'default'
-        required: false
+        required: true
         type: string
-      fail_fast:
-        description: 'Stop remaining jobs on failure'
+      # Optional.
+      artifacts:
+        description: 'Generate artifacts'
         default: false
+        required: false
         type: boolean
       all_artifacts:
         description: 'Generate all artifacts'
         default: false
         required: false
         type: boolean
+      check_ffi_cdecls:
+        description: 'Check FFI cdecls are up-to-date'
+        default: false
+        required: false
+        type: boolean
+      fail_fast:
+        description: 'Stop remaining jobs on failure'
+        default: false
+        required: false
+        type: boolean
       test:
         description: 'Run tests'
-        default: true
+        default: false
         required: false
         type: boolean
   workflow_dispatch:
@@ -49,7 +61,7 @@ jobs:
         id: generate
         run: |
           set -o noglob
-          ./.ci/build_matrix_generate.sh ${{ inputs.jobs }}
+          ./.ci/build_matrix_generate.sh ${{ inputs.artifacts }} ${{ inputs.jobs }}
     outputs:
       jobs: ${{ steps.generate.outputs.jobs }}
 
@@ -62,8 +74,9 @@ jobs:
     uses: ./.github/workflows/build_matrix.yml
     with:
       jobs: ${{ fromJSON(needs.prepare.outputs.jobs).emulator }}
-      fail_fast: ${{ inputs.fail_fast || true }}
       all_artifacts: ${{ inputs.all_artifacts }}
+      check_ffi_cdecls: ${{ inputs.check_ffi_cdecls }}
+      fail_fast: ${{ inputs.fail_fast || true }}
       test: ${{ inputs.test }}
 
   platform:
@@ -76,8 +89,9 @@ jobs:
     uses: ./.github/workflows/build_matrix.yml
     with:
       jobs: ${{ fromJSON(needs.prepare.outputs.jobs).platform }}
-      fail_fast: ${{ inputs.fail_fast }}
       all_artifacts: ${{ inputs.all_artifacts }}
+      check_ffi_cdecls: ${{ inputs.check_ffi_cdecls }}
+      fail_fast: ${{ inputs.fail_fast }}
       test: ${{ inputs.test }}
 
 # vim: foldmethod=marker foldlevel=0

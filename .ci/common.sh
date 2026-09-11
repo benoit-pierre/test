@@ -105,5 +105,8 @@ container_exec() {
 
 # }}}
 
+# Ensure `$GITHUB_ENV` and the like are set (fallback to stdout).
+: "${GITHUB_ENV:=/proc/self/fd/1} ${GITHUB_OUTPUT:=/proc/self/fd/1} ${GITHUB_PATH:=/proc/self/fd/1}"
+
 printf '%s\n' "${ANSI_BLUE}$(quote "$0" "$@")${ANSI_RESET}" 1>&2
 trap 'err "Error: exit code $?"' ERR

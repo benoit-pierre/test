@@ -11,14 +11,17 @@ on:
         required: true
         type: string
       # Optional.
-      fail_fast:
-        default: false
-        type: boolean
       all_artifacts:
         default: false
         type: boolean
+      check_ffi_cdecls:
+        default: false
+        type: boolean
+      fail_fast:
+        default: false
+        type: boolean
       test:
-        default: true
+        default: false
         type: boolean
 
 defaults:

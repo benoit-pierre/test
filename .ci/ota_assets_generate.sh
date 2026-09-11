@@ -59,7 +59,7 @@ pushd "${assets_dir}" >/dev/null || exit
 container_start
 
 while read -r line; do
-    declare -A "asset=(${line})"
+    declare -A asset="(${line})"
     asset[file]="${asset[file]##*/}"
 
     printf '%s\n' "${ANSI_BLUE}${asset[platform_name]}: ${asset[file]}${ANSI_RESET}"

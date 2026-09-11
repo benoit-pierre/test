@@ -25,6 +25,6 @@ fi
 }
 
 # Outputs.
-printf '%s=%s\n' 'stale' "${stale}" >>"${GITHUB_OUTPUT:-/proc/self/fd/1}"
+printf '%s=%s\n' 'stale' "${stale}" >>"${GITHUB_OUTPUT}"
 
 # vim: sw=4

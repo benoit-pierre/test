@@ -52,7 +52,6 @@ jobs:
       jobs: release
       fail_fast: true
       all_artifacts: true
-      test: false
 
   sign_android_apks:
     name: Sign Android APKs

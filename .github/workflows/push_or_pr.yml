@@ -16,6 +16,7 @@ concurrency:
 
 jobs:
 
+  # FIXME: only on PRs?
   lint:
     name: Lint
     uses: ./.github/workflows/lint.yml
@@ -24,3 +25,7 @@ jobs:
     name: Build
     needs: lint
     uses: ./.github/workflows/build.yml
+    with:
+      jobs: ${{ github.event_name }}
+      check_ffi_cdecls: true
+      test: true

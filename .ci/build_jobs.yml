@@ -1,7 +1,6 @@
 # Sets. {{{
 
-# Default jobs to run.
-default: &DEFAULT [
+pull_request: &PR [
   # emulator
   emu-gcc,
   # macos
@@ -13,9 +12,9 @@ default: &DEFAULT [
   kindlepw2,
 ]
 
-# Extra jobs when on master.
-master: [
-  *DEFAULT,
+# Extra jobs when pushing (e.g. on master).
+push: [
+  *PR,
   emu-clang,
   macos-x86_64,
 ]
@@ -39,7 +38,7 @@ release: [
 emulator: # {{{
 
   - id: emu-clang
-    job: Clang
+    job: Emulator (Clang)
     image: koreader/kobase-clang:3.0.0-22.04
     target: ""
     env: PARALLEL_JOBS=5 KODEBUG= USE_CLANG=1
@@ -47,7 +46,7 @@ emulator: # {{{
 
   - &EMU_GCC
     id: emu-gcc
-    job: GCC
+    job: Emulator (GCC)
     image: koreader/kobase:3.0.0-22.04
     target: ""
     env: PARALLEL_JOBS=5 KODEBUG=
@@ -56,7 +55,7 @@ emulator: # {{{
 
   - <<: *EMU_GCC
     id: emu-gcc-debug
-    job: GCC Debug
+    job: Emulator (GCC, Debug)
     env: PARALLEL_JOBS=5 KODEBUG=1
 
 # }}}

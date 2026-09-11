@@ -4,7 +4,9 @@ CI_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=/dev/null
 source "${CI_DIR}/common.sh"
 
-[[ $# -ge 1 ]] || die "at least one argument expected, got $#"
+[[ $# -ge 2 ]] || die "at least 2 arguments expected, got $#"
+with_artifacts="$1"
+shift 1
 
 jobs_file="${0%/*}/build_jobs.yml"
 jq_script="${0%/*}/build_matrix_generate.jq"
@@ -14,10 +16,10 @@ if "${yq[@]}" --yaml-fix-merge-anchor-to-spec >/dev/null 2>&1; then
     yq+=(--yaml-fix-merge-anchor-to-spec)
 fi
 
-json="$("${yq[@]}" --output-format=json . "${jobs_file}")"
+json="$(run "${yq[@]}" --output-format=json . "${jobs_file}")"
 
 # Debug.
-jobs="$(jq --compact-output --from-file "${jq_script}" --args "$@" <<<"${json}")"
+jobs="$(run jq --compact-output --from-file "${jq_script}" --argjson with_artifacts "${with_artifacts}" --args "$@" <<<"${json}")"
 {
     printf 'jobs: '
     <<<"${jobs}" jq --color-output --sort-keys
@@ -26,6 +28,6 @@ jobs="$(jq --compact-output --from-file "${jq_script}" --args "$@" <<<"${json}")
 }
 
 # Outputs.
-printf '%s=%s\n' 'jobs' "${jobs}" >>"${GITHUB_OUTPUT:-/proc/self/fd/1}"
+printf '%s=%s\n' 'jobs' "${jobs}" >>"${GITHUB_OUTPUT}"
 
 # vim: sw=4

@@ -24,15 +24,16 @@ def match(filters):
   [
     .value.[]
     | select(.id | match($s2.filters))
-    # …updating optional fields.
+    # …updating optional fields…
     | .cache=(.cache // .id)
     | .target=(.target // .id)
     | .check_ffi_cdecls=(.check_ffi_cdecls // true)
+    # …and deleting artifact if not keeping them.
+    | if $with_artifacts then . else del(.artifact) end
   ]
 )) #| debug
 # Split into 2 groups: emulator and platform jobs.
 | group_by(.key == "emulator")
-| debug
 | map({
   "key": (if .[0].key == "emulator" then "emulator" else "platform" end),
   "value": ([.[].value] | flatten),
