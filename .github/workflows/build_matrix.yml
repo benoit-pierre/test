@@ -55,6 +55,14 @@ jobs:
 
       # }}}
 
+      - name: Check FFI cdecls are up-to-date
+        if: inputs.check_ffi_cdecls && matrix.check_ffi_cdecls
+        run: ":"
+
+      - name: Test
+        if: inputs.test && matrix.test
+        run: ":"
+
       # Generate & upload artifacts. {{{
 
       - name: Generate artifacts
