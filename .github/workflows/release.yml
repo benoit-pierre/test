@@ -38,7 +38,9 @@ jobs:
           clean: false
           fetch-tags: true
           show-progress: false
-          sparse-checkout: .ci
+          sparse-checkout: |
+            .ci
+            tools
       - name: Check staleness
         id: check
         run: ./.ci/release_staleness_check.sh
