@@ -38,7 +38,9 @@ jobs:
           fetch-tags: true
           filter: tree:0
           show-progress: false
-          sparse-checkout: .ci tools
+          sparse-checkout: |
+            .ci
+            tools
       - name: Upload
         env:
           GH_TOKEN: ${{ github.token }}
