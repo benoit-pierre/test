@@ -16,11 +16,11 @@ run gh release download --dir="${assets_dir}" "${release_tag}"
 run "${CI_DIR}/ota_assets_generate.sh" "${assets_dir}" stable
 
 # Label assets.
-out="$("${CI_DIR}/assets_label_and_sort.sh" "${assets_dir}"/*)"
+out="$("${CI_DIR}/assets_filter_label_and_sort.sh" nightly "${assets_dir}"/*)"
 readarray -t assets <<<"${out}"
 
 # Upload them to the OTA release.
-run gh release upload --clobber ota "${assets[@]}"
+run gh release upload --clobber "${OTA_RELEASE}" "${assets[@]}"
 
 # And trim old versions.
 run "${CI_DIR}/ota_release_trim.sh"

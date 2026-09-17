@@ -9,6 +9,9 @@ declare -r ANSI_GREEN=$'\033[32;1m'
 declare -r ANSI_BLUE=$'\033[34;1m'
 declare -r ANSI_RESET=$'\033[0m'
 
+# shellcheck disable=SC2034
+declare -r OTA_RELEASE='ota'
+
 DRY_RUN="${DRY_RUN:-}"
 
 quote() {
@@ -29,8 +32,12 @@ die() {
 }
 
 run() {
-    local code
-    printf '%s\n' "${GITHUB_ACTIONS:+::group::}${ANSI_GREEN}$(quote "$@")${ANSI_RESET}" 1>&2
+    local code pipe
+    if [[ "$1" == '|' ]]; then
+        pipe='1'
+        shift
+    fi
+    printf '%s\n' "${GITHUB_ACTIONS:+::group::}${ANSI_BLUE}${pipe:+| }$(quote "$@")${ANSI_RESET}" 1>&2
     if [[ -n "${DRY_RUN}" ]]; then
         code=0
     else
@@ -41,30 +48,6 @@ run() {
     fi
     [[ -z "${GITHUB_ACTIONS}" ]] || printf '::endgroup::\n' 1>&2
     return "${code}"
-}
-
-travis_retry() {
-    local result=0
-    local count=1
-    set +e
-
-    while [ ${count} -le 3 ]; do
-        [ ${result} -ne 0 ] && {
-            echo -e "\n${ANSI_RED}The command \"$*\" failed. Retrying, ${count} of 3.${ANSI_RESET}\n" >&2
-        }
-        "$@"
-        result=$?
-        [ ${result} -eq 0 ] && break
-        count=$((count + 1))
-        sleep 1
-    done
-
-    [ ${count} -gt 3 ] && {
-        echo -e "\n${ANSI_RED}The command \"$*\" failed 3 times.${ANSI_RESET}\n" >&2
-    }
-
-    set -e
-    return ${result}
 }
 
 ONEXIT=()
@@ -90,7 +73,7 @@ container_start() {
 
 container_exec() {
     local code
-    printf '%s\n' "${GITHUB_ACTIONS:+::group::}${ANSI_GREEN}$(quote "$@")${ANSI_RESET}${ANSI_DIM} [docker]${ANSI_RESET}" 1>&2
+    printf '%s\n' "${GITHUB_ACTIONS:+::group::}${ANSI_BLUE}$(quote "$@")${ANSI_RESET}${ANSI_DIM} [docker]${ANSI_RESET}" 1>&2
     if [[ -n "${DRY_RUN}" ]]; then
         code=0
     else
@@ -108,5 +91,5 @@ container_exec() {
 # Ensure `$GITHUB_ENV` and the like are set (fallback to stdout).
 : "${GITHUB_ENV:=/proc/self/fd/1} ${GITHUB_OUTPUT:=/proc/self/fd/1} ${GITHUB_PATH:=/proc/self/fd/1}"
 
-printf '%s\n' "${ANSI_BLUE}$(quote "$0" "$@")${ANSI_RESET}" 1>&2
+printf '%s\n' "${ANSI_GREEN}$(quote "$0" "$@")${ANSI_RESET}" 1>&2
 trap 'err "Error: exit code $?"' ERR

@@ -1,3 +1,4 @@
+# This workflow is managed by gh actions-lock.
 # Workaround for uploading multiple unarchived artifacts until
 # https://github.com/actions/upload-artifact#766 is resolved.
 
@@ -38,7 +39,7 @@ runs:
 
       - name: Upload artifact (1/${{ steps.expand.outputs.artifact_count }})
         if: steps.expand.outputs.artifact_1
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v7.0.1
         with:
           archive: false
           path: ${{ steps.expand.outputs.artifact_1 }}
@@ -46,7 +47,7 @@ runs:
 
       - name: Upload artifact (2/${{ steps.expand.outputs.artifact_count }})
         if: steps.expand.outputs.artifact_2
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v7.0.1
         with:
           archive: false
           path: ${{ steps.expand.outputs.artifact_2 }}
@@ -54,7 +55,7 @@ runs:
 
       - name: Upload artifact (3/${{ steps.expand.outputs.artifact_count }})
         if: steps.expand.outputs.artifact_3
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v7.0.1
         with:
           archive: false
           path: ${{ steps.expand.outputs.artifact_3 }}
@@ -62,7 +63,7 @@ runs:
 
       - name: Upload artifact (4/${{ steps.expand.outputs.artifact_count }})
         if: steps.expand.outputs.artifact_4
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v7.0.1
         with:
           archive: false
           path: ${{ steps.expand.outputs.artifact_4 }}
@@ -70,7 +71,7 @@ runs:
 
       - name: Upload artifact (5/${{ steps.expand.outputs.artifact_count }})
         if: steps.expand.outputs.artifact_5
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v7.0.1
         with:
           archive: false
           path: ${{ steps.expand.outputs.artifact_5 }}
@@ -78,7 +79,7 @@ runs:
 
       - name: Upload artifact (6/${{ steps.expand.outputs.artifact_count }})
         if: steps.expand.outputs.artifact_6
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v7.0.1
         with:
           archive: false
           path: ${{ steps.expand.outputs.artifact_6 }}
@@ -86,7 +87,7 @@ runs:
 
       - name: Upload artifact (7/${{ steps.expand.outputs.artifact_count }})
         if: steps.expand.outputs.artifact_7
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v7.0.1
         with:
           archive: false
           path: ${{ steps.expand.outputs.artifact_7 }}
@@ -94,7 +95,7 @@ runs:
 
       - name: Upload artifact (8/${{ steps.expand.outputs.artifact_count }})
         if: steps.expand.outputs.artifact_8
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v7.0.1
         with:
           archive: false
           path: ${{ steps.expand.outputs.artifact_8 }}

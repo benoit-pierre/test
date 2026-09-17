@@ -5,9 +5,11 @@ CI_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "${CI_DIR}/common.sh"
 
 [[ $# -eq 2 ]] || die "2 arguments expected, got $#"
-assets_dir="$1"
-channel="$2"
+channel="$1"
+assets_dir="$(realpath "$2")"
 shift 2
+
+procs="$(getconf _NPROCESSORS_ONLN)"
 
 latest_make() {
     [[ $# -eq 4 ]] || return
@@ -20,6 +22,10 @@ latest_make() {
     if [[ "${latest}" != "${latest_nightly}" ]]; then
         run cp "${latest}" "${latest_nightly}"
     fi
+}
+
+release_make() {
+    container_exec ./.mkrelease.sh --jobs "${procs}" "$@"
 }
 
 kotasync_make() {
@@ -43,8 +49,8 @@ zsync_make() {
 }
 
 # Fetch latest nightly kotasync files.
-if out="$(run gh release view --json assets --jq '.assets[].name | select(test("^koreader-.*-latest-nightly\\.kotasync$"))' ota)" && [[ -n "${out}" ]]; then
-    run gh release download --dir="${assets_dir}/.ota" --pattern='koreader-*-latest-nightly.kotasync' ota
+if out="$(run gh release view --json assets --jq '.assets[].name | select(test("^koreader-.*-latest-nightly\\.kotasync$"))' "${OTA_RELEASE}")" && [[ -n "${out}" ]]; then
+    run gh release download --dir="${assets_dir}/.ota" --pattern='koreader-*-latest-nightly.kotasync' "${OTA_RELEASE}"
     # shellcheck disable=SC2016
     onexit 'run rm -rf "${assets_dir}/.ota"'
 fi
@@ -55,6 +61,8 @@ initial_assets="$("${CI_DIR}/assets_parse_to_sh.sh" "${assets_dir}"/*)"
 printf '%s\n' "${ANSI_DIM}pushd $(quote "${assets_dir}")${ANSI_RESET}" 1>&2
 pushd "${assets_dir}" >/dev/null || exit
 
+run cp "${CI_DIR%/*}/tools/mkrelease.sh" .mkrelease.sh
+
 # Start helper container.
 container_start
 
@@ -62,38 +70,39 @@ while read -r line; do
     declare -A asset="(${line})"
     asset[file]="${asset[file]##*/}"
 
-    printf '%s\n' "${ANSI_BLUE}${asset[platform_name]}: ${asset[file]}${ANSI_RESET}"
+    printf '%s\n' "${ANSI_GREEN}${asset[platform_name]}: ${asset[file]}${ANSI_RESET}"
 
     latest_files=("koreader-${asset[platform]}"-latest-{"${channel}",nightly})
 
-    case "${asset[platform]}" in
+    case "${asset[platform]}.${asset[extension]}" in
 
-        android-arm) latest_files=("${latest_files[@]/-android-arm-/-android-}") ;&
-        android-*)
-            case "${asset[extension]}" in
-                apk) latest_make link "${asset[file]}" "${latest_files[@]}" ;;
-            esac
-            echo "${line}"
+        android-arm.apk) latest_files=("${latest_files[@]/-android-arm-/-android-}") ;&
+        android-*.apk)
+            latest_make link "${asset[file]}" "${latest_files[@]}"
             if [[ "${asset[stable]}" == 'true' ]] && [[ "${asset[commit_hash]}" ]]; then
                 commit_count="$(git rev-list --count "v${asset[base_version]}")"
                 run sh -c "printf '%s\n%u\n' 'v${asset[version]}' '${commit_count}' >koreader-android-fdroid-latest"
             fi
             ;;
 
-        cervantes | kindle* | kobo* | pocketbook* | remarkable* | sony-prstux)
-            case "${asset[extension]}" in
-                tar.xz) kotasync_make "${asset[file]}" "${asset[file]%.tar.xz}.kotasync" "${latest_files[@]/%/.kotasync}" ;;
-                targz) zsync_make "${asset[file]}" "${asset[file]%.targz}.zsync" "${latest_files[@]/%/.zsync}" ;;
+        cervantes.zip | kindle*.zip | kobo*.zip | pocketbook*.zip | remarkable*.zip)
+            stem="${asset[file]%.zip}"
+            # New OTA.
+            release_make "${stem}.tar.xz" "${asset[file]}"
+            kotasync_make "${stem}.tar.xz" "${stem}.kotasync" "${latest_files[@]/%/.kotasync}"
+            # Old OTA.
+            case "${asset[platform]}" in
+                kobo*) opts=('--manifest=koreader/ota/package.index') pats=('-x!koreader.png') ;;
+                pocketbook*) opts=('--manifest=applications/koreader/ota/package.index' '--manifest-transform=s/^/..\//') pats=('-x!system') ;;
+                *) opts=() pats=() ;;
             esac
+            release_make "${opts[@]}" "${stem}.targz" "${asset[file]}" "${pats[@]}"
+            zsync_make "${asset[file]}" "${stem}.zsync" "${latest_files[@]/%/.zsync}"
             ;;
 
-        linux-*)
-            case "${asset[extension]}" in
-                AppImage) latest_make link "${asset[file]}" "${latest_files[@]/-linux-/-appimage-}" ;;
-                deb) latest_make link "${asset[file]}" "${latest_files[@]/-linux-/-debian-}" ;;
-                tar.xz) latest_make link "${asset[file]}" "${latest_files[@]}" ;;
-            esac
-            ;;
+        linux-*.AppImage) latest_make link "${asset[file]}" "${latest_files[@]/-linux-/-appimage-}" ;;
+        linux-*.deb) latest_make link "${asset[file]}" "${latest_files[@]/-linux-/-debian-}" ;;
+        linux-*.tar.xz) latest_make link "${asset[file]}" "${latest_files[@]}" ;;
 
     esac
 

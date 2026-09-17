@@ -1,3 +1,5 @@
+# This workflow is managed by gh actions-lock.
+
 name: Stable to OTA
 
 permissions:
@@ -14,7 +16,7 @@ on:
 
 defaults:
   run:
-    shell: bash
+    shell: stdbuf --error=L --output=L bash --noprofile --norc -eo pipefail {0}
 
 env:
   GH_TELEMETRY: false
@@ -26,7 +28,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v7
+        uses: actions/checkout@v7.0.1
         with:
           clean: false
           # NOTE: we need a non-shallow clone for determining commit

@@ -108,6 +108,7 @@ def asset_parse:
     (.commit_number // 0 | tonumber)
   ])
   | .stable = (.stable // if .commit_number then false else true end)
+  | .ota = (.ota or .extension == "kotasync" or .extension == "zsync")
  #| debug
 ;
 

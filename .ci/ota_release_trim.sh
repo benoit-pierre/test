@@ -6,10 +6,10 @@ source "${CI_DIR}/common.sh"
 
 [[ $# -eq 0 ]] || die "no arguments expected, got $#"
 
-out="$(gh release view ota --json 'assets' --template '{{ range .assets }}{{ .name }}{{ "\n" }}{{ end }}')"
+out="$(gh release view "${OTA_RELEASE}" --json 'assets' --template '{{ range .assets }}{{ .name }}{{ "\n" }}{{ end }}')"
 readarray -t assets <<<"${out}"
 
-printf '%bOTA assets:%b\n' "${ANSI_BLUE}" "${ANSI_RESET}"
+printf '%bOTA assets:%b\n' "${ANSI_GREEN}" "${ANSI_RESET}"
 printf '%s\n' "${assets[@]}"
 
 # Trim assets:
@@ -20,7 +20,7 @@ out="$("${CI_DIR}/assets_trim.sh" 1 3 "${assets[@]}")"
 
 # Delete trimmed assets.
 for a in "${assets[@]}"; do
-    run gh release delete-asset -y ota "${a}"
+    run gh release delete-asset -y "${OTA_RELEASE}" "${a}"
 done
 
 # vim: sw=4

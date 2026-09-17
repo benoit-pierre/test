@@ -4,10 +4,9 @@ CI_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=/dev/null
 source "${CI_DIR}/common.sh"
 
-[[ $# -eq 3 ]] || die "3 arguments expected, got $#"
+[[ $# -eq 2 ]] || die "2 arguments expected, got $#"
 platform="$1"
-all_artifacts="$2"
-macosx_deployment_target="$3"
+macosx_deployment_target="$2"
 shift 3
 
 version="$(git describe --match='v[0-9]*')"
@@ -25,16 +24,15 @@ case "${platform}" in
             linux-x86_64) deb_arch='amd64' ;;
             *) die "unsupported platform: ${platform}" ;;
         esac
-        artifacts+=("koreader-${version}-${platform#linux-}.AppImage")
-        if [[ "${all_artifacts}" = 'true' ]]; then
-            artifacts+=("koreader-${platform}-${version}.tar.xz" "koreader_${version#v}-1_${deb_arch}.deb")
+        artifacts+=(
+            "koreader-${version}-${platform#linux-}.AppImage"
+            "koreader-${platform}-${version}.tar.xz"
+            "koreader_${version#v}-1_${deb_arch}.deb"
+        )
         fi
         ;;
     cervantes | kindle* | kobo* | pocketbook* | remarkable*)
-        artifacts+=("koreader-${platform}-${version}.tar.xz")
-        if [[ "${all_artifacts}" = 'true' ]]; then
-            artifacts+=("koreader-${platform}-${version}.targz" "koreader-${platform}-${version}.zip")
-        fi
+        artifacts+=("koreader-${platform}-${version}.zip")
         ;;
     macos-arm64 | macos-x86_64)
         artifacts+=("koreader-macos-${macosx_deployment_target}-${platform#macos-}-${version}.7z")

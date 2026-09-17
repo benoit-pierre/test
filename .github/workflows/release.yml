@@ -1,3 +1,5 @@
+# This workflow is managed by gh actions-lock.
+
 name: Release
 
 permissions:
@@ -8,9 +10,9 @@ on:
     # NOTE: stable tags only.
     tags:
       - "v*"
-  # schedule:
-  #   # Every day at 6 AM (UTC, default branch only).
-  #   - cron: '0 6 * * *'
+  schedule:
+    # Every day at 2:45 AM (UTC, default branch only).
+    - cron: '45 2 * * *'
   workflow_dispatch:
 
 concurrency:
@@ -19,7 +21,7 @@ concurrency:
 
 defaults:
   run:
-    shell: bash
+    shell: stdbuf --error=L --output=L bash --noprofile --norc -eo pipefail {0}
 
 env:
   GH_TELEMETRY: false
@@ -31,7 +33,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: &ACTION_CHECKOUT actions/checkout@v7
+        uses: actions/checkout@v7.0.1
         with:
           clean: false
           fetch-tags: true
@@ -47,11 +49,11 @@ jobs:
     name: Build
     needs: check
     if: needs.check.outputs.stale
-    uses: ./.github/workflows/build.yml
+    uses: $/.github/workflows/build.yml
     with:
-      jobs: release
+      artifacts: true
       fail_fast: true
-      all_artifacts: true
+      jobs: release
 
   sign_android_apks:
     name: Sign Android APKs
@@ -60,13 +62,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: *ACTION_CHECKOUT
+        uses: actions/checkout@v7.0.1
         with:
           clean: false
           show-progress: false
           sparse-checkout: .ci
       - name: Download APKs
-        uses: &ACTION_DOWNLOAD_ARTIFACT actions/download-artifact@v8
+        uses: actions/download-artifact@v8.0.1
         with:
           merge-multiple: true
           path: assets
@@ -95,14 +97,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: *ACTION_CHECKOUT
+        uses: actions/checkout@v7.0.1
         with:
           clean: false
           fetch-tags: true
           show-progress: false
           sparse-checkout: .ci
       - name: Download artifacts
-        uses: *ACTION_DOWNLOAD_ARTIFACT
+        uses: actions/download-artifact@v8.0.1
         with:
           merge-multiple: true
           path: assets

@@ -1,3 +1,5 @@
+# This workflow is managed by gh actions-lock.
+
 name: Push / PR
 
 permissions:
@@ -19,13 +21,13 @@ jobs:
   # FIXME: only on PRs?
   lint:
     name: Lint
-    uses: ./.github/workflows/lint.yml
+    uses: $/.github/workflows/lint.yml
 
   build:
     name: Build
     needs: lint
-    uses: ./.github/workflows/build.yml
+    uses: $/.github/workflows/build.yml
     with:
       jobs: ${{ github.event_name }}
-      check_ffi_cdecls: true
-      test: true
+      ffi_cdecls_check: true
+      tests: true

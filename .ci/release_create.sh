@@ -14,7 +14,7 @@ if tag_name="$(git describe --tag --exact-match --match='v[0-9]*' 2>/dev/null)";
     prerelease=
     title="${tag_name}"
 else
-    tag_name='ota'
+    tag_name="${OTA_RELEASE}"
     channel='nightly'
     draft=
     prerelease=1
@@ -32,27 +32,27 @@ else
 fi
 
 {
-    echo -e "${ANSI_BLUE}tag_name  : ${tag_name}${ANSI_RESET}"
-    echo -e "${ANSI_BLUE}channel   : ${channel}${ANSI_RESET}"
-    echo -e "${ANSI_BLUE}mode      : ${mode}${ANSI_RESET}"
-    echo -e "${ANSI_BLUE}draft     : ${draft:-0}${ANSI_RESET}"
-    echo -e "${ANSI_BLUE}prerelease: ${prerelease:-0}${ANSI_RESET}"
-    echo -e "${ANSI_BLUE}title     : ${title}${ANSI_RESET}"
-    echo -e "${ANSI_BLUE}target    : ${target}${ANSI_RESET}"
+    echo -e "${ANSI_GREEN}tag_name  : ${tag_name}${ANSI_RESET}"
+    echo -e "${ANSI_GREEN}channel   : ${channel}${ANSI_RESET}"
+    echo -e "${ANSI_GREEN}mode      : ${mode}${ANSI_RESET}"
+    echo -e "${ANSI_GREEN}draft     : ${draft:-0}${ANSI_RESET}"
+    echo -e "${ANSI_GREEN}prerelease: ${prerelease:-0}${ANSI_RESET}"
+    echo -e "${ANSI_GREEN}title     : ${title}${ANSI_RESET}"
+    echo -e "${ANSI_GREEN}target    : ${target}${ANSI_RESET}"
 } 1>&2
 
-if [[ "${channel}" = 'nightly' ]]; then
+if [[ "${channel}" == 'nightly' ]]; then
     # Generate OTA assets.
-    run "${CI_DIR}/ota_assets_generate.sh" "${assets_dir}" "${channel}"
+    run "${CI_DIR}/ota_assets_generate.sh" "${channel}" "${assets_dir}"
 fi
 
 # Label assets.
-out="$("${CI_DIR}/assets_label_and_sort.sh" "${assets_dir}"/*)"
+out="$("${CI_DIR}/assets_filter_label_and_sort.sh" "${channel}" "${assets_dir}"/*)"
 readarray -t assets <<<"${out}"
 
 # Create / update release.
 cmd=(gh release "${mode}" --target="${target}")
-if [[ "${mode}" = 'create' ]]; then
+if [[ "${mode}" == 'create' ]]; then
     cmd+=(${draft:+--draft} ${prerelease:+--prerelease} --title="${title}" --notes='')
 fi
 cmd+=("${tag_name}")
@@ -62,12 +62,12 @@ run "${cmd[@]}"
 run gh release upload --clobber "${tag_name}" "${assets[@]}"
 
 # Update OTA tag.
-if [[ "${channel}" = 'nightly' ]]; then
+if [[ "${channel}" == 'nightly' ]]; then
     run git push -f origin "${target}:refs/tags/${tag_name}"
 fi
 
 # Cleanup:
-if [[ "${channel}" = 'nightly' ]]; then
+if [[ "${channel}" == 'nightly' ]]; then
     # - nightly: old versions
     run "${CI_DIR}/ota_release_trim.sh"
 else
