@@ -13,7 +13,7 @@ shift 1
 run gh release download --dir="${assets_dir}" "${release_tag}"
 
 # Generate OTA assets.
-run "${CI_DIR}/ota_assets_generate.sh" "${assets_dir}" stable
+run "${CI_DIR}/ota_assets_generate.sh" stable "${assets_dir}"
 
 # Label assets.
 out="$("${CI_DIR}/assets_filter_label_and_sort.sh" nightly "${assets_dir}"/*)"
