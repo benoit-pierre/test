@@ -27,7 +27,7 @@ err() {
 }
 
 die() {
-    err "$*"
+    err "$@"
     exit 1
 }
 

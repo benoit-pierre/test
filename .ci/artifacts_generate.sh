@@ -7,7 +7,7 @@ source "${CI_DIR}/common.sh"
 [[ $# -eq 2 ]] || die "2 arguments expected, got $#"
 platform="$1"
 macosx_deployment_target="$2"
-shift 3
+shift 2
 
 version="$(git describe --match='v[0-9]*')"
 run sh -c "echo '${version}' >version.txt"
