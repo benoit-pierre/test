@@ -7,9 +7,11 @@ include "assets_parse";
 # - nightly: no ZIP for kindle and the like
 # - stable: no OTA, and ZIP only for kindle and the like
 | .[] | select(
-  if $channel == "nightly"
-  then .extension != "zip" end
-  else .ota != true and ((.platform | test("^linux")) or (.extension != "tar.xz" and .extension != "targz"))
+  if $channel == "nightly" then
+    .extension != "zip"
+  else
+    .ota != true and ((.platform | test("^linux")) or (.extension != "tar.xz" and .extension != "targz"))
+  end
 )
 # And label.
 | .file + "#" + ([
