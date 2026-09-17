@@ -29,7 +29,6 @@ case "${platform}" in
             "koreader-${platform}-${version}.tar.xz"
             "koreader_${version#v}-1_${deb_arch}.deb"
         )
-        fi
         ;;
     cervantes | kindle* | kobo* | pocketbook* | remarkable*)
         artifacts+=("koreader-${platform}-${version}.zip")
