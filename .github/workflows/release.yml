@@ -30,7 +30,7 @@ jobs:
 
   check:
     name: Check
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
       - name: Checkout
         uses: actions/checkout@v7.0.1
@@ -41,6 +41,8 @@ jobs:
           sparse-checkout: .ci
       - name: Check staleness
         id: check
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: ./.ci/release_staleness_check.sh
     outputs:
       stale: ${{ steps.check.outputs.stale }}
@@ -59,7 +61,7 @@ jobs:
     name: Sign Android APKs
     needs: build
     environment: android
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
       - name: Checkout
         uses: actions/checkout@v7.0.1
@@ -94,7 +96,7 @@ jobs:
     needs: sign_android_apks
     permissions:
       contents: write
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
       - name: Checkout
         uses: actions/checkout@v7.0.1
