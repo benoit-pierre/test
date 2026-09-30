@@ -3,7 +3,7 @@ include "assets_parse";
 [
   $ARGS.positional[] | asset_parse
   # Ignore latest stable / nightly files.
-  | select(.ota | not)
+  | select(.latest | not)
 ] #| debug(flatten | sort_by(.sort_version) | .[].file)
 # Group by stable / nightly…
 | [

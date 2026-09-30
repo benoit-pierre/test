@@ -85,6 +85,7 @@ def asset_parse:
       | .base_version = .version
       | .sort_version = [666]
       | .extension //= ($link_type[.platform] // "link")
+      | .latest = true
       | .ota = true
       | .stable = .base_version == "stable"
     )
@@ -95,6 +96,7 @@ def asset_parse:
       | .base_version = "stable"
       | .sort_version = [666]
       | .extension = "metadata"
+      | .latest = true
       | .ota = true
       | .stable = true
     )
