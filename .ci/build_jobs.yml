@@ -79,6 +79,16 @@ android: # {{{
 
 # }}}
 
+bookeen: # {{{
+
+  - id: bookeen
+    job: Bookeen
+    image: koreader/kobookeen:5.0.0-22.04
+    env: PARALLEL_JOBS=5
+    cache_size: 70M
+
+# }}}
+
 cervantes: # {{{
 
   - id: cervantes
@@ -132,7 +142,7 @@ linux: # {{{
   - &LINUX
     id: linux-aarch64
     job: Linux AArch64
-    runs-on: ubuntu-24.04-arm
+    runs-on: ubuntu-26.04-arm
     image: koreader/koappimage:5.0.0-22.04
     target: linux
     env: PARALLEL_JOBS=5

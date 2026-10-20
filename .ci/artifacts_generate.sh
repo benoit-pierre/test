@@ -30,7 +30,7 @@ case "${platform}" in
             "koreader_${version#v}-1_${deb_arch}.deb"
         )
         ;;
-    cervantes | kindle* | kobo* | pocketbook* | remarkable*)
+    bookeen | cervantes | kindle* | kobo* | pocketbook* | remarkable*)
         artifacts+=("koreader-${platform}-${version}.zip")
         ;;
     macos-arm64 | macos-x86_64)
